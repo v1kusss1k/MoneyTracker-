@@ -1,0 +1,69 @@
+﻿<Window x:Class="MoneyTracker.App.Views.AddTransactionWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Добавить операцию" 
+        Height="400" 
+        Width="350"
+        WindowStartupLocation="CenterOwner">
+
+    <Grid Margin="15">
+        <StackPanel>
+            <TextBlock Text="НОВАЯ ОПЕРАЦИЯ" 
+                       FontSize="18" 
+                       FontWeight="Bold" 
+                       Margin="0 0 0 15"/>
+
+            <!-- ТИП -->
+            <TextBlock Text="Тип операции:"/>
+            <ComboBox x:Name="cmbType" 
+                      SelectedIndex="0"
+                      Margin="0 5 0 15">
+                <ComboBoxItem Content="Доход" Tag="Income"/>
+                <ComboBoxItem Content="Расход" Tag="Expense"/>
+            </ComboBox>
+
+            <!-- СУММА -->
+            <TextBlock Text="Сумма (₽):"/>
+            <TextBox x:Name="txtAmount" 
+                     Text="1000"
+                     FontSize="16"
+                     Margin="0 5 0 15"/>
+
+            <!-- КАТЕГОРИЯ -->
+            <TextBlock Text="Категория:"/>
+            <ComboBox x:Name="cmbCategory" 
+                      IsEditable="True"
+                      Margin="0 5 0 15">
+                <ComboBoxItem Content="Зарплата"/>
+                <ComboBoxItem Content="Фриланс"/>
+                <ComboBoxItem Content="Инвестиции"/>
+                <ComboBoxItem Content="Еда"/>
+                <ComboBoxItem Content="Транспорт"/>
+                <ComboBoxItem Content="Развлечения"/>
+            </ComboBox>
+
+            <!-- ОПИСАНИЕ -->
+            <TextBlock Text="Описание:"/>
+            <TextBox x:Name="txtDescription" 
+                     Height="60"
+                     TextWrapping="Wrap"
+                     Margin="0 5 0 20"/>
+
+            <!-- КНОПКИ -->
+            <StackPanel Orientation="Horizontal" 
+                        HorizontalAlignment="Right">
+                <Button Content="Отмена" 
+                        Width="80"
+                        Background="#F44336"
+                        Foreground="White"
+                        Click="btnCancel_Click"/>
+                <Button Content="Сохранить" 
+                        Width="80"
+                        Background="#4CAF50"
+                        Foreground="White"
+                        Margin="10 0 0 0"
+                        Click="btnSave_Click"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>

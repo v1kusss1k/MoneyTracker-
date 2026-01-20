@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="MoneyTracker.App/MoneyTracker.App.csproj" />
+  <Project Path="MoneyTracker.Core/MoneyTracker.Core.csproj" />
+</Solution>

@@ -1,0 +1,11 @@
+﻿<Window x:Class="MoneyTracker.App.Views.GoalsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Цели накопления" Height="400" Width="600">
+    <Grid>
+        <TextBlock Text="Окно целей накопления (в разработке)" 
+                   HorizontalAlignment="Center" 
+                   VerticalAlignment="Center" 
+                   FontSize="18"/>
+    </Grid>
+</Window>

@@ -1,0 +1,233 @@
+﻿<Window x:Class="MoneyTracker.App.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Копилка - Финансовый трекер" 
+        Height="700" 
+        Width="1000"
+        WindowStartupLocation="CenterScreen">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- ШАПКА -->
+        <Border Grid.Row="0" Background="#2196F3" Padding="20">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="💰 КОПИЛКА" 
+                               FontSize="28" 
+                               FontWeight="Bold" 
+                               Foreground="White"/>
+                    <TextBlock Text="Управление личными финансами" 
+                               FontSize="16" 
+                               Foreground="#E3F2FD"/>
+                </StackPanel>
+
+                <!-- БАЛАНС В ШАПКЕ -->
+                <Border Grid.Column="1" 
+                        Background="White" 
+                        CornerRadius="10" 
+                        Padding="15 10">
+                    <StackPanel>
+                        <TextBlock Text="БАЛАНС" 
+                                   FontSize="12" 
+                                   Foreground="#666"/>
+                        <TextBlock x:Name="txtBalance" 
+                                   Text="0 ₽" 
+                                   FontSize="24" 
+                                   FontWeight="Bold"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- ОСНОВНОЕ СОДЕРЖИМОЕ -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="220"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- ЛЕВАЯ ПАНЕЛЬ - МЕНЮ -->
+            <Border Grid.Column="0" Background="#F5F5F5" Padding="15">
+                <StackPanel>
+                    <TextBlock Text="УПРАВЛЕНИЕ" 
+                               FontWeight="Bold" 
+                               FontSize="16"
+                               Margin="0 0 0 15"/>
+
+                    <Button x:Name="btnAddIncome" 
+                            Content="➕ Добавить доход" 
+                            Background="#4CAF50"
+                            Height="40"
+                            Click="btnAddIncome_Click"/>
+
+                    <Button x:Name="btnAddExpense" 
+                            Content="➖ Добавить расход" 
+                            Background="#F44336"
+                            Height="40"
+                            Margin="0 10 0 0"
+                            Click="btnAddExpense_Click"/>
+
+                    <Separator Margin="0 20"/>
+
+                    <TextBlock Text="СТАТИСТИКА" 
+                               FontWeight="Bold"
+                               Margin="0 0 0 10"/>
+
+                    <StackPanel>
+                        <TextBlock x:Name="txtIncomeTotal" 
+                                   Text="Доходы: 0 ₽"/>
+                        <TextBlock x:Name="txtExpenseTotal" 
+                                   Text="Расходы: 0 ₽" 
+                                   Margin="0 5 0 0"/>
+                        <TextBlock x:Name="txtTransactionCount" 
+                                   Text="Операций: 0" 
+                                   Margin="0 10 0 0"/>
+                    </StackPanel>
+
+                    <Separator Margin="0 20"/>
+
+                    <Button x:Name="btnGoals" 
+                            Content="🎯 Цели" 
+                            Background="#FF9800"
+                            Height="35"
+                            Click="btnGoals_Click"/>
+
+                    <Button x:Name="btnReports" 
+                            Content="📊 Отчёты" 
+                            Background="#9C27B0"
+                            Height="35"
+                            Margin="0 5 0 0"
+                            Click="btnReports_Click"/>
+
+                    <Button x:Name="btnSettings" 
+                            Content="⚙ Настройки" 
+                            Background="#607D8B"
+                            Height="35"
+                            Margin="0 5 0 0"
+                            Click="btnSettings_Click"/>
+                </StackPanel>
+            </Border>
+
+            <!-- ПРАВАЯ ПАНЕЛЬ - СПИСОК ТРАНЗАКЦИЙ -->
+            <Border Grid.Column="1" Padding="20">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- ЗАГОЛОВОК СПИСКА -->
+                    <Border Grid.Row="0" 
+                            Background="#E3F2FD" 
+                            CornerRadius="5" 
+                            Padding="15"
+                            Margin="0 0 0 15">
+                        <TextBlock Text="📋 ПОСЛЕДНИЕ ОПЕРАЦИИ" 
+                                   FontSize="16" 
+                                   FontWeight="Bold"/>
+                    </Border>
+
+                    <!-- СПИСОК ТРАНЗАКЦИЙ -->
+                    <ListView x:Name="lstTransactions" 
+                              Grid.Row="1"
+                              BorderThickness="0">
+                        <ListView.View>
+                            <GridView>
+                                <!-- ДАТА -->
+                                <GridViewColumn Header="Дата" Width="100">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Date, StringFormat=dd.MM.yyyy}"/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+
+                                <!-- ТИП -->
+                                <GridViewColumn Header="Тип" Width="80">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Type}">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="FontWeight" Value="Bold"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Type}" Value="Income">
+                                                                <Setter Property="Foreground" Value="#4CAF50"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Type}" Value="Expense">
+                                                                <Setter Property="Foreground" Value="#F44336"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+
+                                <!-- КАТЕГОРИЯ -->
+                                <GridViewColumn Header="Категория" Width="120">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Category}"/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+
+                                <!-- ОПИСАНИЕ -->
+                                <GridViewColumn Header="Описание" Width="250">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Description}" 
+                                                       TextWrapping="Wrap"/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+
+                                <!-- СУММА -->
+                                <GridViewColumn Header="Сумма" Width="100">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Amount, StringFormat={}{0} ₽}">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="FontWeight" Value="Bold"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Type}" Value="Income">
+                                                                <Setter Property="Foreground" Value="#4CAF50"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Type}" Value="Expense">
+                                                                <Setter Property="Foreground" Value="#F44336"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- ПОДВАЛ -->
+        <Border Grid.Row="2" Background="#F5F5F5" Padding="10">
+            <TextBlock Text="💰 Копилка v1.0 | Учебный проект по ООП | Паттерны: Singleton, Abstract Factory" 
+                       HorizontalAlignment="Center" 
+                       Foreground="#666"/>
+        </Border>
+    </Grid>
+</Window>
