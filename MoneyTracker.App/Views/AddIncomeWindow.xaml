@@ -1,0 +1,48 @@
+﻿<Window x:Class="MoneyTracker.App.Views.AddIncomeWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="➕ Добавить доход" 
+        Height="350" 
+        Width="400"
+        WindowStartupLocation="CenterScreen">
+
+    <Grid Margin="20">
+        <StackPanel>
+            <TextBlock Text="➕ ДОБАВИТЬ ДОХОД" 
+                       FontSize="18" 
+                       FontWeight="Bold" 
+                       Margin="0 0 0 15"/>
+
+            <TextBlock Text="Сумма (₽):"/>
+            <TextBox x:Name="txtAmount" Text="0"/>
+
+            <TextBlock Text="Категория дохода:" Margin="0 10 0 0"/>
+            <ComboBox x:Name="cmbCategory" SelectedIndex="0">
+                <ComboBoxItem Content="💼 Зарплата"/>
+                <ComboBoxItem Content="👨‍💻 Фриланс"/>
+                <ComboBoxItem Content="📈 Инвестиции"/>
+                <ComboBoxItem Content="🎁 Подарок"/>
+                <ComboBoxItem Content="🏆 Премия"/>
+                <ComboBoxItem Content="🏠 Аренда"/>
+                <ComboBoxItem Content="💰 Возврат долга"/>
+            </ComboBox>
+
+            <TextBlock Text="Описание (необязательно):" Margin="0 10 0 0"/>
+            <TextBox x:Name="txtDescription" Height="60" TextWrapping="Wrap"/>
+
+            <StackPanel Orientation="Horizontal" 
+                        HorizontalAlignment="Right" 
+                        Margin="0 20 0 0">
+                <Button Content="Отмена" 
+                        Width="80" 
+                        Margin="0 0 10 0"
+                        Click="BtnCancel_Click"/>
+                <Button Content="Добавить" 
+                        Width="80" 
+                        Background="#4CAF50" 
+                        Foreground="White"
+                        Click="BtnAdd_Click"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>

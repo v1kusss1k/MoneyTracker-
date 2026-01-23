@@ -6,6 +6,9 @@
         Width="1000"
         WindowStartupLocation="CenterScreen">
 
+    <Window.Resources>
+    </Window.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -67,11 +70,13 @@
                     <Button x:Name="btnAddIncome" 
                             Content="➕ Добавить доход" 
                             Background="#4CAF50"
+                            Foreground="White"
                             Height="40"/>
 
                     <Button x:Name="btnAddExpense" 
                             Content="➖ Добавить расход" 
                             Background="#F44336"
+                            Foreground="White"
                             Height="40"
                             Margin="0 10 0 0"/>
 
@@ -82,12 +87,10 @@
                                Margin="0 0 0 10"/>
 
                     <StackPanel>
-                        <!-- ИЗМЕНИЛ: txtIncomeTotal вместо txtIncome -->
                         <TextBlock x:Name="txtIncomeTotal" 
                                    Text="Доходы: 0 ₽" 
                                    Foreground="#4CAF50"
                                    FontWeight="SemiBold"/>
-                        <!-- ИЗМЕНИЛ: txtExpenseTotal вместо txtExpense -->
                         <TextBlock x:Name="txtExpenseTotal" 
                                    Text="Расходы: 0 ₽" 
                                    Foreground="#F44336"
@@ -103,18 +106,21 @@
 
                     <Button x:Name="btnGoals" 
                             Content="🎯 Цели" 
-                            Background="#E3F2FD"
+                            Background="#FF9800"
+                            Foreground="White"
                             Height="35"/>
 
                     <Button x:Name="btnReports" 
                             Content="📊 Отчёты" 
-                            Background="#E3F2FD"
+                            Background="#9C27B0"
+                            Foreground="White"
                             Height="35"
                             Margin="0 5 0 0"/>
 
                     <Button x:Name="btnSettings" 
                             Content="⚙ Настройки" 
-                            Background="#E3F2FD"
+                            Background="#607D8B"
+                            Foreground="White"
                             Height="35"
                             Margin="0 5 0 0"/>
                 </StackPanel>
@@ -134,17 +140,33 @@
                             CornerRadius="5" 
                             Padding="15"
                             Margin="0 0 0 15">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="📋 ПОСЛЕДНИЕ ОПЕРАЦИИ" 
-                                       FontSize="16" 
-                                       FontWeight="Bold"/>
-                            <Button x:Name="btnRefresh" 
-                                    Content="🔄 Обновить" 
-                                    Background="Transparent" 
-                                    Foreground="#2196F3"
-                                    BorderThickness="0"
-                                    Margin="20 0 0 0"/>
-                        </StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                <TextBlock Text="📋 ПОСЛЕДНИЕ ОПЕРАЦИИ" 
+                                           FontSize="16" 
+                                           FontWeight="Bold"/>
+                                <Button x:Name="btnRefresh" 
+                                        Content="🔄 Обновить" 
+                                        Background="Transparent" 
+                                        Foreground="#2196F3"
+                                        BorderThickness="0"
+                                        Margin="20 0 0 0"/>
+                            </StackPanel>
+
+                            <!-- КНОПКА ОЧИСТИТЬ ВСЕ - СПРАВА -->
+                            <Button x:Name="btnClearAll" 
+                                    Grid.Column="1"
+                                    Content="🗑️ Очистить все"
+                                    Background="#F44336"
+                                    Foreground="White"
+                                    Padding="8 4"
+                                    FontSize="12"/>
+                        </Grid>
                     </Border>
 
                     <!-- СПИСОК ТРАНЗАКЦИЙ -->
@@ -163,12 +185,12 @@
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
 
-                                <!-- ТИП -->
+                                <!-- ТИП (НА РУССКОМ) -->
                                 <GridViewColumn Header="Тип" Width="80">
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <TextBlock Text="{Binding Type}" 
-                                                       FontWeight="Bold">
+                                            <TextBlock Text="{Binding TypeDisplay}" 
+                       FontWeight="Bold">
                                                 <TextBlock.Style>
                                                     <Style TargetType="TextBlock">
                                                         <Style.Triggers>
@@ -196,7 +218,7 @@
                                 </GridViewColumn>
 
                                 <!-- ОПИСАНИЕ -->
-                                <GridViewColumn Header="Описание" Width="250">
+                                <GridViewColumn Header="Описание" Width="200">
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding Description}" 
@@ -244,17 +266,20 @@
             </Border>
         </Grid>
 
-        <!-- ПОДВАЛ -->
+        <!-- ПОДВАЛ / СТАТУС БАР -->
         <Border Grid.Row="2" Background="#F5F5F5" Padding="10">
-            <TextBlock Text="💰 Копилка v1.0 | Учебный проект по ООП | Паттерны: Singleton, Abstract Factory" 
-                       HorizontalAlignment="Center" 
-                       Foreground="#666"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" 
+                           x:Name="txtStatus"
+                           Text="Готово" 
+                           Foreground="#666"
+                           VerticalAlignment="Center"/>
+            </Grid>
         </Border>
-        <!-- Статус бар -->
-        <StatusBar Grid.Row="2" Background="#F5F5F5" Height="25">
-            <StatusBarItem>
-                <TextBlock x:Name="txtStatus" Text="Готово" Foreground="#666"/>
-            </StatusBarItem>
-        </StatusBar>
     </Grid>
 </Window>

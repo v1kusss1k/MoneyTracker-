@@ -79,5 +79,16 @@ namespace MoneyTracker.Core.Patterns.Singleton
                 .Where(t => t.Type == TransactionType.Expense)
                 .Sum(t => t.Amount);
         }
+        public void Clear()
+        {
+            Transactions.Clear();
+            Balance = 0;
+        }
+        public void Reset()
+        {
+            Transactions.Clear();
+            Balance = 0; // Можно внутри класса
+            FileManager.SaveTransactions(Transactions); // Если есть
+        }
     }
 }

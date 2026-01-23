@@ -19,7 +19,6 @@ namespace MoneyTracker.App.ViewModels
         public string Description => _transaction.Description;
         public string Icon => _transaction.Type == TransactionType.Income ? "💰" : "💸";
         public string Color => _transaction.Type == TransactionType.Income ? "Green" : "Red";
-
         public TransactionViewModel(Transaction transaction)
         {
             _transaction = transaction ?? throw new ArgumentNullException(nameof(transaction));

@@ -1,42 +1,25 @@
-﻿<Window x:Class="MoneyTracker.App.Views.AddTransactionWindow"
+﻿<Window x:Class="MoneyTracker.App.Views.AddExpenseWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Добавить операцию" 
-        Height="400" 
-        Width="350"
+        Title="➖ Добавить расход" 
+        Height="350" 
+        Width="400"
         WindowStartupLocation="CenterScreen">
 
     <Grid Margin="20">
         <StackPanel>
-            <TextBlock Text="Добавить операцию" 
+            <TextBlock Text="➖ ДОБАВИТЬ РАСХОД" 
                        FontSize="18" 
                        FontWeight="Bold" 
                        Margin="0 0 0 15"/>
 
-            <!-- ТИП -->
-            <TextBlock Text="Тип операции:"/>
-            <ComboBox x:Name="cmbTransactionType" SelectedIndex="0">
-                <ComboBoxItem Content="Доход"/>
-                <ComboBoxItem Content="Расход"/>
-            </ComboBox>
-
             <!-- СУММА -->
-            <TextBlock Text="Сумма (₽):" Margin="0 10 0 0"/>
+            <TextBlock Text="Сумма (₽):"/>
             <TextBox x:Name="txtAmount" Text="0"/>
 
-            <!-- КАТЕГОРИЯ -->
-            <TextBlock Text="Категория:" Margin="0 10 0 0"/>
+            <!-- КАТЕГОРИИ РАСХОДОВ -->
+            <TextBlock Text="Категория расхода:" Margin="0 10 0 0"/>
             <ComboBox x:Name="cmbCategory" SelectedIndex="0">
-                <!-- ДОХОДЫ -->
-                <ComboBoxItem Content="Зарплата"/>
-                <ComboBoxItem Content="Стипендия"/>
-                <ComboBoxItem Content="Фриланс"/>
-                <ComboBoxItem Content="Инвестиции"/>
-                <ComboBoxItem Content="Подарок"/>
-                <ComboBoxItem Content="Премия"/>
-                <ComboBoxItem Content="Другое"/>
-
-                <!-- РАСХОДЫ -->
                 <ComboBoxItem Content="Продукты"/>
                 <ComboBoxItem Content="Транспорт"/>
                 <ComboBoxItem Content="Коммуналка"/>
@@ -47,13 +30,12 @@
                 <ComboBoxItem Content="Образование"/>
                 <ComboBoxItem Content="Путешествия"/>
                 <ComboBoxItem Content="Техника"/>
-                <ComboBoxItem Content="Красота"/>
-                <ComboBoxItem Content="Спорт"/>
-                <ComboBoxItem Content="Подписки"/>
+                <ComboBoxItem Content="Кредиты"/>
+                <ComboBoxItem Content="Домашние животные"/>
             </ComboBox>
 
             <!-- ОПИСАНИЕ -->
-            <TextBlock Text="Описание:" Margin="0 10 0 0"/>
+            <TextBlock Text="Описание (необязательно):" Margin="0 10 0 0"/>
             <TextBox x:Name="txtDescription" Height="60" TextWrapping="Wrap"/>
 
             <!-- КНОПКИ -->
@@ -64,11 +46,11 @@
                         Width="80" 
                         Margin="0 0 10 0"
                         Click="BtnCancel_Click"/>
-                <Button Content="Сохранить" 
+                <Button Content="Добавить" 
                         Width="80" 
-                        Background="#4CAF50" 
+                        Background="#F44336" 
                         Foreground="White"
-                        Click="BtnSave_Click"/>
+                        Click="BtnAdd_Click"/>
             </StackPanel>
         </StackPanel>
     </Grid>

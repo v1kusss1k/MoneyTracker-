@@ -1,53 +1,45 @@
 ﻿using MoneyTracker.Core.Patterns.Singleton;
 using MoneyTracker.Core.Patterns.Factories;
-using MoneyTracker.Core.Enums;
 using System;
 using System.Globalization;
 using System.Windows;
 
 namespace MoneyTracker.App.Views
 {
-    public partial class AddTransactionWindow : Window
+    public partial class AddIncomeWindow : Window
     {
         public event EventHandler TransactionAdded;
-
         private AppWallet _wallet;
 
-        public AddTransactionWindow()
+        public AddIncomeWindow()
         {
             InitializeComponent();
             _wallet = AppWallet.Instance;
         }
 
-        private void BtnSave_Click(object sender, RoutedEventArgs e)
+        private void BtnAdd_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                if (!decimal.TryParse(txtAmount.Text, out decimal amount) || amount <= 0)
+                if (!decimal.TryParse(txtAmount.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out decimal amount) || amount <= 0)
                 {
-                    MessageBox.Show("Введите корректную сумму!", "Ошибка");
+                    MessageBox.Show("Введите положительную сумму!", "Ошибка",
+                                  MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
 
-                var type = cmbTransactionType.SelectedIndex == 0
-                    ? TransactionType.Income
-                    : TransactionType.Expense;
-
-                string category = "Другое";
+                string category = "Доход";
                 if (cmbCategory.SelectedItem != null)
                 {
-                    category = (cmbCategory.SelectedItem as System.Windows.Controls.ComboBoxItem)?.Content?.ToString() ?? "Другое";
+                    category = (cmbCategory.SelectedItem as System.Windows.Controls.ComboBoxItem)?.Content?.ToString() ?? "Доход";
                 }
 
-                var factory = type == TransactionType.Income
-                    ? new IncomeFactory()
-                    : new ExpenseFactory() as TransactionFactory;
-
+                var factory = new IncomeFactory();
                 var transaction = factory.CreateTransaction(amount, category, txtDescription.Text);
+
                 _wallet.AddTransaction(transaction);
                 TransactionAdded?.Invoke(this, EventArgs.Empty);
-
-                Close(); 
+                Close();
             }
             catch (Exception ex)
             {
