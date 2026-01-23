@@ -23,10 +23,9 @@ namespace MoneyTracker.App.Views
         }
 
         private void UpdateDisplay()
-        {            
+        {                       
             try
             {
-                // Обновляем баланс
                 txtBalance.Text = $"{_wallet.Balance:N0} ₽";
 
                 // Обновляем статистику
