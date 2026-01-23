@@ -67,15 +67,13 @@
                     <Button x:Name="btnAddIncome" 
                             Content="➕ Добавить доход" 
                             Background="#4CAF50"
-                            Height="40"
-                            Click="btnAddIncome_Click"/>
+                            Height="40"/>
 
                     <Button x:Name="btnAddExpense" 
                             Content="➖ Добавить расход" 
                             Background="#F44336"
                             Height="40"
-                            Margin="0 10 0 0"
-                            Click="btnAddExpense_Click"/>
+                            Margin="0 10 0 0"/>
 
                     <Separator Margin="0 20"/>
 
@@ -84,13 +82,20 @@
                                Margin="0 0 0 10"/>
 
                     <StackPanel>
+                        <!-- ИЗМЕНИЛ: txtIncomeTotal вместо txtIncome -->
                         <TextBlock x:Name="txtIncomeTotal" 
-                                   Text="Доходы: 0 ₽"/>
+                                   Text="Доходы: 0 ₽" 
+                                   Foreground="#4CAF50"
+                                   FontWeight="SemiBold"/>
+                        <!-- ИЗМЕНИЛ: txtExpenseTotal вместо txtExpense -->
                         <TextBlock x:Name="txtExpenseTotal" 
                                    Text="Расходы: 0 ₽" 
+                                   Foreground="#F44336"
+                                   FontWeight="SemiBold"
                                    Margin="0 5 0 0"/>
                         <TextBlock x:Name="txtTransactionCount" 
                                    Text="Операций: 0" 
+                                   Foreground="#666"
                                    Margin="0 10 0 0"/>
                     </StackPanel>
 
@@ -98,23 +103,20 @@
 
                     <Button x:Name="btnGoals" 
                             Content="🎯 Цели" 
-                            Background="#FF9800"
-                            Height="35"
-                            Click="btnGoals_Click"/>
+                            Background="#E3F2FD"
+                            Height="35"/>
 
                     <Button x:Name="btnReports" 
                             Content="📊 Отчёты" 
-                            Background="#9C27B0"
+                            Background="#E3F2FD"
                             Height="35"
-                            Margin="0 5 0 0"
-                            Click="btnReports_Click"/>
+                            Margin="0 5 0 0"/>
 
                     <Button x:Name="btnSettings" 
                             Content="⚙ Настройки" 
-                            Background="#607D8B"
+                            Background="#E3F2FD"
                             Height="35"
-                            Margin="0 5 0 0"
-                            Click="btnSettings_Click"/>
+                            Margin="0 5 0 0"/>
                 </StackPanel>
             </Border>
 
@@ -132,9 +134,17 @@
                             CornerRadius="5" 
                             Padding="15"
                             Margin="0 0 0 15">
-                        <TextBlock Text="📋 ПОСЛЕДНИЕ ОПЕРАЦИИ" 
-                                   FontSize="16" 
-                                   FontWeight="Bold"/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="📋 ПОСЛЕДНИЕ ОПЕРАЦИИ" 
+                                       FontSize="16" 
+                                       FontWeight="Bold"/>
+                            <Button x:Name="btnRefresh" 
+                                    Content="🔄 Обновить" 
+                                    Background="Transparent" 
+                                    Foreground="#2196F3"
+                                    BorderThickness="0"
+                                    Margin="20 0 0 0"/>
+                        </StackPanel>
                     </Border>
 
                     <!-- СПИСОК ТРАНЗАКЦИЙ -->
@@ -147,7 +157,8 @@
                                 <GridViewColumn Header="Дата" Width="100">
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <TextBlock Text="{Binding Date, StringFormat=dd.MM.yyyy}"/>
+                                            <TextBlock Text="{Binding DateFormatted}"
+                                                       VerticalAlignment="Center"/>
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
@@ -156,10 +167,10 @@
                                 <GridViewColumn Header="Тип" Width="80">
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <TextBlock Text="{Binding Type}">
+                                            <TextBlock Text="{Binding Type}" 
+                                                       FontWeight="Bold">
                                                 <TextBlock.Style>
                                                     <Style TargetType="TextBlock">
-                                                        <Setter Property="FontWeight" Value="Bold"/>
                                                         <Style.Triggers>
                                                             <DataTrigger Binding="{Binding Type}" Value="Income">
                                                                 <Setter Property="Foreground" Value="#4CAF50"/>
@@ -179,7 +190,7 @@
                                 <GridViewColumn Header="Категория" Width="120">
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <TextBlock Text="{Binding Category}"/>
+                                            <TextBlock Text="{Binding Category}" VerticalAlignment="Center"/>
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
@@ -189,7 +200,8 @@
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding Description}" 
-                                                       TextWrapping="Wrap"/>
+                                                       TextWrapping="Wrap"
+                                                       VerticalAlignment="Center"/>
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
@@ -198,10 +210,10 @@
                                 <GridViewColumn Header="Сумма" Width="100">
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <TextBlock Text="{Binding Amount, StringFormat={}{0} ₽}">
+                                            <TextBlock Text="{Binding AmountFormatted}" 
+                                                       FontWeight="Bold">
                                                 <TextBlock.Style>
                                                     <Style TargetType="TextBlock">
-                                                        <Setter Property="FontWeight" Value="Bold"/>
                                                         <Style.Triggers>
                                                             <DataTrigger Binding="{Binding Type}" Value="Income">
                                                                 <Setter Property="Foreground" Value="#4CAF50"/>
@@ -218,6 +230,15 @@
                                 </GridViewColumn>
                             </GridView>
                         </ListView.View>
+
+                        <!-- СТИЛЬ ДЛЯ ПУСТОГО СПИСКА -->
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="Padding" Value="10 8"/>
+                                <Setter Property="BorderThickness" Value="0 0 0 1"/>
+                                <Setter Property="BorderBrush" Value="#EEEEEE"/>
+                            </Style>
+                        </ListView.ItemContainerStyle>
                     </ListView>
                 </Grid>
             </Border>
@@ -229,5 +250,11 @@
                        HorizontalAlignment="Center" 
                        Foreground="#666"/>
         </Border>
+        <!-- Статус бар -->
+        <StatusBar Grid.Row="2" Background="#F5F5F5" Height="25">
+            <StatusBarItem>
+                <TextBlock x:Name="txtStatus" Text="Готово" Foreground="#666"/>
+            </StatusBarItem>
+        </StatusBar>
     </Grid>
 </Window>

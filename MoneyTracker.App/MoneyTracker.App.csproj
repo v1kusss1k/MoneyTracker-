@@ -9,11 +9,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="ViewModels\ReportsViewModel.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\MoneyTracker.Core\MoneyTracker.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ViewModels\" />
     <Folder Include="Assets\" />
     <Folder Include="Controls\" />
     <Folder Include="Styles\" />

@@ -6,8 +6,7 @@ namespace MoneyTracker.Core.Patterns.Factories
 {
     /// <summary>
     /// Абстрактная фабрика для создания транзакций
-    /// Реализует паттерн Abstract Factory
-    /// </summary>
+    /// </алис>
     public abstract class TransactionFactory
     {
         /// <summary>
@@ -19,7 +18,7 @@ namespace MoneyTracker.Core.Patterns.Factories
             string description = "");
 
         /// <summary>
-        /// Возвращает тип транзакции (для UI)
+        /// Возвращает тип транзакции
         /// </summary>
         public abstract TransactionType GetTransactionType();
 
@@ -29,12 +28,12 @@ namespace MoneyTracker.Core.Patterns.Factories
         public abstract string GetDisplayName();
 
         /// <summary>
-        /// Возвращает цвет для UI (в формате HEX)
+        /// Возвращает цвет для UI
         /// </summary>
         public abstract string GetColor();
 
         /// <summary>
-        /// Возвращает иконку (можно использовать emoji или путь к картинке)
+        /// Возвращает иконку
         /// </summary>
         public abstract string GetIcon();
     }

@@ -4,65 +4,71 @@
         Title="Добавить операцию" 
         Height="400" 
         Width="350"
-        WindowStartupLocation="CenterOwner">
+        WindowStartupLocation="CenterScreen">
 
-    <Grid Margin="15">
+    <Grid Margin="20">
         <StackPanel>
-            <TextBlock Text="НОВАЯ ОПЕРАЦИЯ" 
+            <TextBlock Text="Добавить операцию" 
                        FontSize="18" 
                        FontWeight="Bold" 
                        Margin="0 0 0 15"/>
 
             <!-- ТИП -->
             <TextBlock Text="Тип операции:"/>
-            <ComboBox x:Name="cmbType" 
-                      SelectedIndex="0"
-                      Margin="0 5 0 15">
-                <ComboBoxItem Content="Доход" Tag="Income"/>
-                <ComboBoxItem Content="Расход" Tag="Expense"/>
+            <ComboBox x:Name="cmbTransactionType" SelectedIndex="0">
+                <ComboBoxItem Content="Доход"/>
+                <ComboBoxItem Content="Расход"/>
             </ComboBox>
 
             <!-- СУММА -->
-            <TextBlock Text="Сумма (₽):"/>
-            <TextBox x:Name="txtAmount" 
-                     Text="1000"
-                     FontSize="16"
-                     Margin="0 5 0 15"/>
+            <TextBlock Text="Сумма (₽):" Margin="0 10 0 0"/>
+            <TextBox x:Name="txtAmount" Text="0"/>
 
             <!-- КАТЕГОРИЯ -->
-            <TextBlock Text="Категория:"/>
-            <ComboBox x:Name="cmbCategory" 
-                      IsEditable="True"
-                      Margin="0 5 0 15">
+            <TextBlock Text="Категория:" Margin="0 10 0 0"/>
+            <ComboBox x:Name="cmbCategory" SelectedIndex="0">
+                <!-- ДОХОДЫ -->
                 <ComboBoxItem Content="Зарплата"/>
+                <ComboBoxItem Content="Стипендия"/>
                 <ComboBoxItem Content="Фриланс"/>
                 <ComboBoxItem Content="Инвестиции"/>
-                <ComboBoxItem Content="Еда"/>
+                <ComboBoxItem Content="Подарок"/>
+                <ComboBoxItem Content="Премия"/>
+                <ComboBoxItem Content="Другое"/>
+
+                <!-- РАСХОДЫ -->
+                <ComboBoxItem Content="Продукты"/>
                 <ComboBoxItem Content="Транспорт"/>
+                <ComboBoxItem Content="Коммуналка"/>
+                <ComboBoxItem Content="Кафе/рестораны"/>
+                <ComboBoxItem Content="Одежда"/>
+                <ComboBoxItem Content="Здоровье"/>
                 <ComboBoxItem Content="Развлечения"/>
+                <ComboBoxItem Content="Образование"/>
+                <ComboBoxItem Content="Путешествия"/>
+                <ComboBoxItem Content="Техника"/>
+                <ComboBoxItem Content="Красота"/>
+                <ComboBoxItem Content="Спорт"/>
+                <ComboBoxItem Content="Подписки"/>
             </ComboBox>
 
             <!-- ОПИСАНИЕ -->
-            <TextBlock Text="Описание:"/>
-            <TextBox x:Name="txtDescription" 
-                     Height="60"
-                     TextWrapping="Wrap"
-                     Margin="0 5 0 20"/>
+            <TextBlock Text="Описание:" Margin="0 10 0 0"/>
+            <TextBox x:Name="txtDescription" Height="60" TextWrapping="Wrap"/>
 
             <!-- КНОПКИ -->
             <StackPanel Orientation="Horizontal" 
-                        HorizontalAlignment="Right">
+                        HorizontalAlignment="Right" 
+                        Margin="0 20 0 0">
                 <Button Content="Отмена" 
-                        Width="80"
-                        Background="#F44336"
-                        Foreground="White"
-                        Click="btnCancel_Click"/>
+                        Width="80" 
+                        Margin="0 0 10 0"
+                        Click="BtnCancel_Click"/>
                 <Button Content="Сохранить" 
-                        Width="80"
-                        Background="#4CAF50"
+                        Width="80" 
+                        Background="#4CAF50" 
                         Foreground="White"
-                        Margin="10 0 0 0"
-                        Click="btnSave_Click"/>
+                        Click="BtnSave_Click"/>
             </StackPanel>
         </StackPanel>
     </Grid>

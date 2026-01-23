@@ -1,60 +1,53 @@
-﻿using MoneyTracker.Core.Enums;
+﻿using MoneyTracker.Core.Patterns.Singleton;
 using MoneyTracker.Core.Patterns.Factories;
-using MoneyTracker.Core.Patterns.Singleton;
+using MoneyTracker.Core.Enums;
 using System;
+using System.Globalization;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace MoneyTracker.App.Views
 {
     public partial class AddTransactionWindow : Window
     {
-        public event Action TransactionAdded;
+        public event EventHandler TransactionAdded;
+
+        private AppWallet _wallet;
 
         public AddTransactionWindow()
         {
             InitializeComponent();
+            _wallet = AppWallet.Instance;
         }
 
-        private void btnSave_Click(object sender, RoutedEventArgs e)
+        private void BtnSave_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                // Проверяем сумму
                 if (!decimal.TryParse(txtAmount.Text, out decimal amount) || amount <= 0)
                 {
                     MessageBox.Show("Введите корректную сумму!", "Ошибка");
                     return;
                 }
 
-                // Получаем тип
-                var selectedItem = cmbType.SelectedItem as ComboBoxItem;
-                var type = selectedItem?.Tag?.ToString() == "Income"
+                var type = cmbTransactionType.SelectedIndex == 0
                     ? TransactionType.Income
                     : TransactionType.Expense;
 
-                // Получаем категорию
-                string category = cmbCategory.Text;
-                if (string.IsNullOrWhiteSpace(category))
-                    category = type == TransactionType.Income ? "Доход" : "Расход";
+                string category = "Другое";
+                if (cmbCategory.SelectedItem != null)
+                {
+                    category = (cmbCategory.SelectedItem as System.Windows.Controls.ComboBoxItem)?.Content?.ToString() ?? "Другое";
+                }
 
-                // Получаем описание
-                string description = txtDescription.Text;
-                if (string.IsNullOrWhiteSpace(description))
-                    description = $"{type}: {category}";
+                var factory = type == TransactionType.Income
+                    ? new IncomeFactory()
+                    : new ExpenseFactory() as TransactionFactory;
 
-                // Создаём транзакцию через фабрику
-                var factory = TransactionFactoryCreator.CreateFactory(type);
-                var transaction = factory.CreateTransaction(amount, category, description);
+                var transaction = factory.CreateTransaction(amount, category, txtDescription.Text);
+                _wallet.AddTransaction(transaction);
+                TransactionAdded?.Invoke(this, EventArgs.Empty);
 
-                // Добавляем в кошелёк
-                AppWallet.Instance.AddTransaction(transaction);
-
-                // Вызываем событие
-                TransactionAdded?.Invoke();
-
-                MessageBox.Show("Операция успешно добавлена!", "Успех");
-                this.Close();
+                Close(); 
             }
             catch (Exception ex)
             {
@@ -62,9 +55,9 @@ namespace MoneyTracker.App.Views
             }
         }
 
-        private void btnCancel_Click(object sender, RoutedEventArgs e)
+        private void BtnCancel_Click(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            Close();
         }
     }
 }

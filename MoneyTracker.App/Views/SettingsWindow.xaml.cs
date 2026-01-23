@@ -8,5 +8,10 @@ namespace MoneyTracker.App.Views
         {
             InitializeComponent();
         }
+
+        private void BtnSave_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
     }
 }

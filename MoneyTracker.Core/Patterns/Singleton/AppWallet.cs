@@ -16,8 +16,8 @@ namespace MoneyTracker.Core.Patterns.Singleton
 
         private AppWallet()
         {
-            Balance = 0;
-            Transactions = new List<Transaction>();
+            Transactions = FileManager.LoadTransactions();
+            CalculateBalance();
         }
 
         public static AppWallet Instance
@@ -43,12 +43,26 @@ namespace MoneyTracker.Core.Patterns.Singleton
                 Balance += transaction.Amount;
             else
                 Balance -= transaction.Amount;
+
+            FileManager.SaveTransactions(Transactions); // Сохраняем в файл
+        }
+
+        private void CalculateBalance()
+        {
+            Balance = 0;
+            foreach (var transaction in Transactions)
+            {
+                if (transaction.Type == TransactionType.Income)
+                    Balance += transaction.Amount;
+                else
+                    Balance -= transaction.Amount;
+            }
         }
 
         public List<Transaction> GetTransactions()
         {
             return Transactions
-                .OrderByDescending(t => t.Date)  // Сначала новые
+                .OrderByDescending(t => t.Date)
                 .ToList();
         }
 

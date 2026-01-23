@@ -4,10 +4,6 @@ using System;
 
 namespace MoneyTracker.Core.Patterns.Factories
 {
-    /// <summary>
-    /// Фабрика для создания расходов
-    /// Реализация паттерна Abstract Factory
-    /// </summary>
     public class ExpenseFactory : TransactionFactory
     {
         public override Transaction CreateTransaction(
@@ -30,6 +26,7 @@ namespace MoneyTracker.Core.Patterns.Factories
             };
         }
 
+        // Добавьте эти методы:
         public override TransactionType GetTransactionType()
             => TransactionType.Expense;
 

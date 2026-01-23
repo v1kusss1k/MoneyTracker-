@@ -19,5 +19,15 @@ namespace MoneyTracker.Core.Models
             Category = "";
             Description = "";
         }
+
+        public Transaction(TransactionType type, decimal amount, string category, string description = "")
+        {
+            Id = Guid.NewGuid();
+            Type = type;
+            Amount = amount;
+            Category = category;
+            Description = description;
+            Date = DateTime.Now;
+        }
     }
 }

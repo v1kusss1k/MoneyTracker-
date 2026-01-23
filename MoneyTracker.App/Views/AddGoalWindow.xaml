@@ -1,0 +1,82 @@
+﻿<Window x:Class="MoneyTracker.App.Views.AddGoalWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:system="clr-namespace:System;assembly=mscorlib"
+        Title="Новая цель" 
+        Height="450" 
+        Width="400"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize">
+
+    <Window.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="Margin" Value="0 5 0 2"/>
+            <Setter Property="FontSize" Value="14"/>
+        </Style>
+
+        <Style TargetType="TextBox">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="Margin" Value="0 0 0 10"/>
+        </Style>
+
+        <Style TargetType="DatePicker">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="Margin" Value="0 0 0 10"/>
+        </Style>
+
+        <Style TargetType="Button">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="10 5"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Width" Value="80"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="20">
+        <StackPanel>
+            <TextBlock Text="НОВАЯ ЦЕЛЬ" 
+                       FontSize="18" 
+                       FontWeight="Bold" 
+                       Margin="0 0 0 20"/>
+
+            <!-- НАЗВАНИЕ -->
+            <TextBlock Text="Название цели:"/>
+            <TextBox x:Name="txtName" 
+                     Text="Новая цель"/>
+
+            <!-- ОПИСАНИЕ -->
+            <TextBlock Text="Описание (необязательно):"/>
+            <TextBox x:Name="txtDescription" 
+                     TextWrapping="Wrap" 
+                     Height="60"/>
+
+            <!-- ЦЕЛЕВАЯ СУММА -->
+            <TextBlock Text="Целевая сумма (₽):"/>
+            <TextBox x:Name="txtTargetAmount" 
+                     Text="10000"/>
+
+            <!-- ДАТА ДОСТИЖЕНИЯ -->
+            <TextBlock Text="Дата достижения:"/>
+            <DatePicker x:Name="dpTargetDate" 
+                       SelectedDate="{x:Static system:DateTime.Now}"/>
+
+            <!-- КНОПКИ -->
+            <StackPanel Orientation="Horizontal" 
+                        HorizontalAlignment="Right" 
+                        Margin="0 20 0 0">
+                <Button x:Name="btnCancel" 
+                        Content="Отмена" 
+                        Background="#F44336" 
+                        Foreground="White"
+                        Click="BtnCancel_Click"/>
+                <Button x:Name="btnSave" 
+                        Content="Сохранить" 
+                        Background="#4CAF50"
+                        Foreground="White"
+                        Click="BtnSave_Click"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>

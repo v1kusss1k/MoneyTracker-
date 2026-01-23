@@ -5,7 +5,7 @@ using System;
 namespace MoneyTracker.Core.Patterns.Factories
 {
     /// <summary>
-    /// Фабрика для создания переводов (дополнительная функция)
+    /// Фабрика для создания переводов
     /// </summary>
     public class TransferFactory : TransactionFactory
     {
@@ -29,6 +29,7 @@ namespace MoneyTracker.Core.Patterns.Factories
             };
         }
 
+        // Добавьте эти методы:
         public override TransactionType GetTransactionType()
             => TransactionType.Expense;
 

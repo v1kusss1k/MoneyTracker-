@@ -5,6 +5,7 @@ C:\Users\Виктория\Desktop\прога\MoneyTracker\MoneyTrackerSolution\M
 C:\Users\Виктория\Desktop\прога\MoneyTracker\MoneyTrackerSolution\MoneyTracker.Core\obj\Debug\net8.0\MoneyTracker.Core.AssemblyInfoInputs.cache
 C:\Users\Виктория\Desktop\прога\MoneyTracker\MoneyTrackerSolution\MoneyTracker.Core\obj\Debug\net8.0\MoneyTracker.Core.AssemblyInfo.cs
 C:\Users\Виктория\Desktop\прога\MoneyTracker\MoneyTrackerSolution\MoneyTracker.Core\obj\Debug\net8.0\MoneyTracker.Core.csproj.CoreCompileInputs.cache
+C:\Users\Виктория\Desktop\прога\MoneyTracker\MoneyTrackerSolution\MoneyTracker.Core\obj\Debug\net8.0\MoneyTracker.Core.sourcelink.json
 C:\Users\Виктория\Desktop\прога\MoneyTracker\MoneyTrackerSolution\MoneyTracker.Core\obj\Debug\net8.0\MoneyTracker.Core.dll
 C:\Users\Виктория\Desktop\прога\MoneyTracker\MoneyTrackerSolution\MoneyTracker.Core\obj\Debug\net8.0\refint\MoneyTracker.Core.dll
 C:\Users\Виктория\Desktop\прога\MoneyTracker\MoneyTrackerSolution\MoneyTracker.Core\obj\Debug\net8.0\MoneyTracker.Core.pdb
