@@ -6,10 +6,10 @@ namespace MoneyTracker.Core.Models
     public class Budget
     {
         public Guid Id { get; set; }
-        public string Category { get; set; } // Категория расхода
-        public decimal MonthlyLimit { get; set; } // Лимит на месяц
-        public int Year { get; set; } // Год бюджета
-        public int Month { get; set; } // Месяц бюджета (1-12)
+        public string Category { get; set; } = string.Empty; // Инициализируем
+        public decimal MonthlyLimit { get; set; }
+        public int Year { get; set; }
+        public int Month { get; set; }
         public DateTime CreatedDate { get; set; }
         public bool IsActive { get; set; }
 
@@ -25,7 +25,7 @@ namespace MoneyTracker.Core.Models
             Year = now.Year;
             Month = now.Month;
             IsActive = true;
-            Category = string.Empty;
+            Category = string.Empty; // Явная инициализация
         }
 
         public Budget(string category, decimal monthlyLimit) : this()
@@ -34,7 +34,10 @@ namespace MoneyTracker.Core.Models
             MonthlyLimit = monthlyLimit;
         }
 
-        // Для отображения
-        public override string ToString() => $"{Category}: {MonthlyLimit:N0}₽/мес";
+        public override string ToString()
+        {
+            var monthName = new DateTime(Year, Month, 1).ToString("MMMM yyyy");
+            return $"{Category}: {MonthlyLimit:N0}₽ ({monthName})";
+        }
     }
 }

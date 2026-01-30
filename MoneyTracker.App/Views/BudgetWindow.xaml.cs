@@ -201,7 +201,16 @@ namespace MoneyTracker.App.Views
 
         private void BtnClose_Click(object sender, RoutedEventArgs e)
         {
-            Close();
+            try
+            {
+                // Просто закрываем окно
+                Close();
+            }
+            catch (Exception ex)
+            {
+                // Если ошибка - закрываем принудительно
+                this.DialogResult = false;
+            }
         }
     }
 }

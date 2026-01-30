@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NET;NET8_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
 C:\Users\Виктория\Desktop\прога\MoneyTracker\MoneyTrackerSolution\MoneyTracker.App\App.xaml
-81154569314
+13-836299779
 
-20-1983971710
+251327484222
 199-1554479861
-Views\AddAmountWindow.xaml;Views\AddExpenseWindow.xaml;Views\AddGoalWindow.xaml;Views\AddIncomeWindow.xaml;Views\GoalsWindow.xaml;Views\MainWindow.xaml;Views\ReportsWindow.xaml;Views\SettingsWindow.xaml;
+Views\AddAmountWindow.xaml;Views\AddEditBudgetWindow.xaml;Views\AddExpenseWindow.xaml;Views\AddGoalWindow.xaml;Views\AddIncomeWindow.xaml;Views\AddRecurringWindow.xaml;Views\BudgetWindow.xaml;Views\GoalsWindow.xaml;Views\MainWindow.xaml;Views\NotificationsWindow.xaml;Views\RecurringWindow.xaml;Views\ReportsWindow.xaml;Views\SettingsWindow.xaml;
 
 False
 

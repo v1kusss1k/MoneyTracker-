@@ -1,12 +1,12 @@
-﻿using MoneyTracker.Core.Models;
-using MoneyTracker.Core.Enums;
+﻿using MoneyTracker.Core.Enums;
+using MoneyTracker.Core.Models;
+using MoneyTracker.Core.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace MoneyTracker.Core.Patterns.Singleton
 {
-    // один экземпляр кошелька на всё приложение, гарантирует единую точку доступа к данным о финансах
     public sealed class AppWallet
     {
         private static AppWallet _instance;
@@ -14,13 +14,13 @@ namespace MoneyTracker.Core.Patterns.Singleton
 
         public decimal Balance { get; private set; }
         public List<Transaction> Transactions { get; private set; }
+
         private AppWallet()
         {
             Transactions = FileManager.LoadTransactions();
             CalculateBalance();
         }
 
-        // свойство для доступа к единственному экземпляру
         public static AppWallet Instance
         {
             get
@@ -29,14 +29,14 @@ namespace MoneyTracker.Core.Patterns.Singleton
                 {
                     if (_instance == null)
                     {
-                        _instance = new AppWallet();                             //создается единственный экземпляр
+                        _instance = new AppWallet();
                     }
                     return _instance;
                 }
             }
         }
 
-        public void AddTransaction(Transaction transaction)       // добавление новой транзакции
+        public void AddTransaction(Transaction transaction)
         {
             Transactions.Add(transaction);
 
@@ -45,7 +45,16 @@ namespace MoneyTracker.Core.Patterns.Singleton
             else
                 Balance -= transaction.Amount;
 
-            FileManager.SaveTransactions(Transactions);           // автосохранение
+            // Используем статический метод из NotificationService
+            var settings = NotificationService.LoadAppSettingsStatic();
+            if (settings.AutoSave)
+            {
+                FileManager.SaveTransactions(Transactions);
+            }
+            else
+            {
+                FileManager.SaveTransactions(Transactions);
+            }
         }
 
         public bool RemoveTransaction(Guid transactionId)
@@ -54,7 +63,6 @@ namespace MoneyTracker.Core.Patterns.Singleton
             if (transaction == null)
                 return false;
 
-            // Пересчитываем баланс
             if (transaction.Type == TransactionType.Income)
                 Balance -= transaction.Amount;
             else
@@ -64,7 +72,8 @@ namespace MoneyTracker.Core.Patterns.Singleton
             FileManager.SaveTransactions(Transactions);
             return true;
         }
-        private void CalculateBalance()                          // пересчет баланса
+
+        private void CalculateBalance()
         {
             Balance = 0;
             foreach (var transaction in Transactions)
@@ -83,23 +92,25 @@ namespace MoneyTracker.Core.Patterns.Singleton
                 .ToList();
         }
 
-        public decimal GetTotalIncome()                                 // общий доход
+        public decimal GetTotalIncome()
         {
             return Transactions
                 .Where(t => t.Type == TransactionType.Income)
                 .Sum(t => t.Amount);
         }
 
-        public decimal GetTotalExpense()                               // общий расход
+        public decimal GetTotalExpense()
         {
             return Transactions
                 .Where(t => t.Type == TransactionType.Expense)
                 .Sum(t => t.Amount);
         }
-        public void Clear()                                           // очистка всех данных
+
+        public void Clear()
         {
             Transactions.Clear();
             Balance = 0;
+            FileManager.SaveTransactions(Transactions);
         }
     }
 }

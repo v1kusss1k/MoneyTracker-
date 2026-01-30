@@ -1,0 +1,65 @@
+﻿<Window x:Class="MoneyTracker.App.Views.AddRecurringWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Новый регулярный платеж" 
+        Height="450" Width="450"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize">
+
+    <Grid Margin="20">
+        <StackPanel>
+            <TextBlock Text="НОВЫЙ РЕГУЛЯРНЫЙ ПЛАТЕЖ" 
+                       FontSize="18" FontWeight="Bold" 
+                       Margin="0,0,0,20"/>
+
+            <!-- НАЗВАНИЕ -->
+            <TextBlock Text="Название платежа:"/>
+            <TextBox x:Name="txtName" Margin="0,0,0,15"/>
+
+            <!-- СУММА -->
+            <TextBlock Text="Сумма (₽):"/>
+            <TextBox x:Name="txtAmount" Margin="0,0,0,15"/>
+
+            <!-- ТИП -->
+            <TextBlock Text="Тип:"/>
+            <ComboBox x:Name="cmbType" SelectedIndex="-1" Margin="0,0,0,15">
+                <ComboBoxItem Content="➖ Расход"/>
+                <ComboBoxItem Content="➕ Доход"/>
+            </ComboBox>
+
+            <!-- КАТЕГОРИЯ -->
+            <TextBlock Text="Категория:"/>
+            <TextBox x:Name="txtCategory" Margin="0,0,0,15"/>
+
+            <!-- ПЕРИОДИЧНОСТЬ -->
+            <TextBlock Text="Периодичность:"/>
+            <ComboBox x:Name="cmbRecurrence" SelectedIndex="-1" Margin="0,0,0,15">
+                <ComboBoxItem Content="📅 Ежемесячно"/>
+                <ComboBoxItem Content="📆 Еженедельно"/>
+                <ComboBoxItem Content="📝 Ежедневно"/>
+                <ComboBoxItem Content="📊 Ежегодно"/>
+            </ComboBox>
+
+            <!-- ДЕНЬ МЕСЯЦА/НЕДЕЛИ -->
+            <StackPanel x:Name="pnlDaySettings" Visibility="Collapsed" Margin="0,0,0,15">
+                <TextBlock x:Name="txtDayLabel" Text="День месяца (1-31):"/>
+                <TextBox x:Name="txtDay" Text="1"/>
+            </StackPanel>
+
+            <!-- КНОПКИ -->
+            <StackPanel Orientation="Horizontal" 
+                        HorizontalAlignment="Right" 
+                        Margin="0,20,0,0">
+                <Button Content="Отмена" 
+                        Width="90"
+                        Margin="0,0,10,0"
+                        Click="BtnCancel_Click"/>
+                <Button Content="Сохранить" 
+                        Width="90"
+                        Background="#4CAF50"
+                        Foreground="White"
+                        Click="BtnSave_Click"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>

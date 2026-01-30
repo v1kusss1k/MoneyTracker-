@@ -13,12 +13,14 @@ namespace MoneyTracker.Core.Services
         private List<Goal> _goals;
         private readonly string _filePath;
 
+        private List<Goal> _cachedGoals;
+        private DateTime _goalsCacheTime;
         public GoalService()
         {
             _filePath = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                 "MoneyTracker", "goals.json");
-            _goals = new List<Goal>(); // ИНИЦИАЛИЗИРУЕМ тут
+            _goals = new List<Goal>();
             LoadGoals();
         }
 
@@ -62,6 +64,16 @@ namespace MoneyTracker.Core.Services
         // Метод был GetAllGoals, исправляем на GetGoals
         public List<Goal> GetGoals()
         {
+            // Кэшируем на 10 секунд
+            if (_cachedGoals != null && (DateTime.Now - _goalsCacheTime).TotalSeconds < 10)
+            {
+                return _cachedGoals.Where(g => !g.IsArchived).ToList();
+            }
+
+            LoadGoals();
+            _cachedGoals = _goals;
+            _goalsCacheTime = DateTime.Now;
+
             return _goals.Where(g => !g.IsArchived).ToList();
         }
 
@@ -77,6 +89,8 @@ namespace MoneyTracker.Core.Services
 
             _goals.Add(goal);
             SaveGoals();
+            // СБРАСЫВАЕМ КЭШ
+            _cachedGoals = null;
         }
 
         public void UpdateGoal(Goal goal)
@@ -98,6 +112,8 @@ namespace MoneyTracker.Core.Services
                 existing.IsArchived = goal.IsArchived;
                 existing.WasNotified = goal.WasNotified;
                 SaveGoals();
+                // СБРАСЫВАЕМ КЭШ
+                _cachedGoals = null;
             }
         }
 
@@ -105,6 +121,8 @@ namespace MoneyTracker.Core.Services
         {
             _goals.RemoveAll(g => g.Id == id);
             SaveGoals();
+            // СБРАСЫВАЕМ КЭШ
+            _cachedGoals = null;
         }
 
         public void AddToGoal(Guid goalId, decimal amount)
@@ -114,6 +132,8 @@ namespace MoneyTracker.Core.Services
             {
                 goal.AddAmount(amount);
                 SaveGoals();
+                // СБРАСЫВАЕМ КЭШ
+                _cachedGoals = null;
             }
         }
     }

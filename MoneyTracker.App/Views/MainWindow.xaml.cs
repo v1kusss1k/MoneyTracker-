@@ -1,9 +1,11 @@
 ﻿using MoneyTracker.App.ViewModels;
 using MoneyTracker.Core.Patterns.Singleton;
+using MoneyTracker.Core.Services;
 using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace MoneyTracker.App.Views
 {
@@ -255,6 +257,120 @@ namespace MoneyTracker.App.Views
             {
                 MessageBox.Show($"Ошибка открытия бюджетов: {ex.Message}", "Ошибка");
             }
+        }
+        private void btnRecurring_Click(object sender, RoutedEventArgs e)
+        {
+            var window = new RecurringWindow();
+            window.Owner = this;
+            window.ShowDialog();
+        }
+        private void btnNotifications_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var notificationService = new NotificationService();
+
+                // Получаем новые уведомления
+                var newNotifications = notificationService.CheckAllNotifications();
+
+                // Загружаем сохраненные уведомления
+                var savedNotifications = notificationService.LoadNotificationsFromFile();
+
+                // Объединяем, убирая дубликаты
+                var allNotifications = new List<NotificationService.Notification>();
+                var seenIds = new HashSet<Guid>();
+
+                // Сначала добавляем новые
+                foreach (var notification in newNotifications)
+                {
+                    if (!seenIds.Contains(notification.Id))
+                    {
+                        allNotifications.Add(notification);
+                        seenIds.Add(notification.Id);
+                    }
+                }
+
+                // Затем добавляем сохраненные
+                foreach (var notification in savedNotifications)
+                {
+                    if (!seenIds.Contains(notification.Id))
+                    {
+                        allNotifications.Add(notification);
+                        seenIds.Add(notification.Id);
+                    }
+                }
+
+                // Сортируем
+                allNotifications = allNotifications
+                    .OrderByDescending(n => n.CreatedAt)
+                    .ToList();
+
+                if (allNotifications.Any())
+                {
+                    var notificationWindow = new NotificationsWindow(allNotifications);
+                    notificationWindow.Owner = this;
+                    notificationWindow.ShowDialog();
+
+                    // Обновляем кнопку после закрытия
+                    UpdateNotificationButton();
+                }
+                else
+                {
+                    MessageBox.Show("Нет уведомлений", "Уведомления",
+                                  MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Упрощенное сообщение об ошибке
+                MessageBox.Show("Не удалось загрузить уведомления. Файл уведомлений будет создан заново.",
+                              "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+
+                // Попробуем создать новый файл
+                try
+                {
+                    var notificationService = new NotificationService();
+                    notificationService.SaveNotificationsToFile(new List<NotificationService.Notification>());
+                }
+                catch { }
+            }
+        }
+
+        // Метод для обновления текста кнопки уведомлений
+        private void UpdateNotificationButton()
+        {
+            try
+            {
+                var notificationService = new NotificationService();
+
+                // Просто проверяем есть ли уведомления
+                bool hasNotifications = notificationService.HasNotifications();
+
+                if (hasNotifications)
+                {
+                    btnNotifications.Content = "🔔 Есть уведомления";
+                    btnNotifications.Background = new SolidColorBrush(Color.FromRgb(255, 152, 0));
+                    btnNotifications.ToolTip = "Есть новые уведомления";
+                }
+                else
+                {
+                    btnNotifications.Content = "🔔 Уведомления";
+                    btnNotifications.Background = new SolidColorBrush(Color.FromRgb(255, 152, 0));
+                    btnNotifications.ToolTip = "Просмотреть уведомления";
+                }
+            }
+            catch
+            {
+                // Если ошибка - просто показываем стандартную кнопку
+                btnNotifications.Content = "🔔 Уведомления";
+                btnNotifications.Background = new SolidColorBrush(Color.FromRgb(255, 152, 0));
+            }
+        }
+
+        // Вызываем при загрузке окна
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            UpdateNotificationButton();
         }
     }
 }

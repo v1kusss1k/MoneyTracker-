@@ -1,30 +1,67 @@
-﻿using MoneyTracker.Core.Models;
+﻿#nullable disable
+
+using MoneyTracker.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
+using System.Threading;
 
 namespace MoneyTracker.Core
 {
-    // менеджер для работы с файлами использует json для сериализации
     public static class FileManager
     {
-        // путь к папке с данными в appdata
         private static readonly string DataFolder = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
             "MoneyTracker");
 
-        // путь к файлу транзакций
         private static readonly string TransactionsFile = Path.Combine(DataFolder, "transactions.json");
+        private static readonly string SettingsFile = Path.Combine(DataFolder, "settings.json");
 
-        // статический конструктор создает папку при первом обращении
+        private static Timer _autoSaveTimer;
+        private static List<Transaction> _transactionsToSave;
+        private static bool _autoSaveEnabled = true;
+
         static FileManager()
         {
             if (!Directory.Exists(DataFolder))
                 Directory.CreateDirectory(DataFolder);
+
+            LoadAutoSaveSettings();
+            StartAutoSaveTimer();
         }
 
-        // загрузка транзакций из файла
+        private static void LoadAutoSaveSettings()
+        {
+            try
+            {
+                if (File.Exists(SettingsFile))
+                {
+                    var json = File.ReadAllText(SettingsFile);
+                    var settings = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(json);
+                    if (settings != null && settings.ContainsKey("AutoSave"))
+                    {
+                        _autoSaveEnabled = settings["AutoSave"].GetBoolean();
+                    }
+                }
+            }
+            catch { }
+        }
+
+        private static void StartAutoSaveTimer()
+        {
+            _autoSaveTimer = new Timer(AutoSaveCallback, null, 30000, 30000);
+        }
+
+        private static void AutoSaveCallback(object state)
+        {
+            if (_autoSaveEnabled && _transactionsToSave != null && _transactionsToSave.Count > 0)
+            {
+                SaveTransactionsInternal(_transactionsToSave);
+                _transactionsToSave = null;
+            }
+        }
+
         public static List<Transaction> LoadTransactions()
         {
             try
@@ -41,8 +78,19 @@ namespace MoneyTracker.Core
             }
         }
 
-        // сохранение транзакций в файл
         public static void SaveTransactions(List<Transaction> transactions)
+        {
+            if (_autoSaveEnabled)
+            {
+                _transactionsToSave = transactions;
+            }
+            else
+            {
+                SaveTransactionsInternal(transactions);
+            }
+        }
+
+        private static void SaveTransactionsInternal(List<Transaction> transactions)
         {
             try
             {
@@ -53,6 +101,50 @@ namespace MoneyTracker.Core
             {
                 Console.WriteLine($"Ошибка сохранения: {ex.Message}");
             }
+        }
+
+        public static void SetAutoSaveEnabled(bool enabled)
+        {
+            _autoSaveEnabled = enabled;
+
+            if (!enabled && _transactionsToSave != null)
+            {
+                SaveTransactionsInternal(_transactionsToSave);
+                _transactionsToSave = null;
+            }
+        }
+
+        public static void SaveJsonFile<T>(string fileName, T data)
+        {
+            try
+            {
+                var filePath = Path.Combine(DataFolder, fileName);
+                var json = JsonSerializer.Serialize(data, new JsonSerializerOptions { WriteIndented = true });
+                File.WriteAllText(filePath, json);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка сохранения {fileName}: {ex.Message}");
+            }
+        }
+
+        public static T LoadJsonFile<T>(string fileName) where T : new()
+        {
+            try
+            {
+                var filePath = Path.Combine(DataFolder, fileName);
+                if (File.Exists(filePath))
+                {
+                    var json = File.ReadAllText(filePath);
+                    return JsonSerializer.Deserialize<T>(json) ?? new T();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка загрузки {fileName}: {ex.Message}");
+            }
+
+            return new T();
         }
     }
 }

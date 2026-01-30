@@ -1,97 +1,55 @@
 ﻿<Window x:Class="MoneyTracker.App.Views.AddEditBudgetWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Бюджет" 
-        Height="400" 
-        Width="450"
+        Title="Новый бюджет" 
+        Height="350" 
+        Width="400"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize">
 
-    <Window.Resources>
-        <Style TargetType="TextBlock">
-            <Setter Property="Margin" Value="0,5,0,2"/>
-            <Setter Property="FontSize" Value="14"/>
-        </Style>
-
-        <Style TargetType="TextBox">
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="Padding" Value="5"/>
-            <Setter Property="Margin" Value="0,0,0,15"/>
-        </Style>
-
-        <Style TargetType="ComboBox">
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="Padding" Value="5"/>
-            <Setter Property="Margin" Value="0,0,0,15"/>
-        </Style>
-
-        <Style TargetType="Button">
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="Padding" Value="10,5"/>
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="Width" Value="100"/>
-        </Style>
-    </Window.Resources>
-
     <Grid Margin="20">
         <StackPanel>
-            <TextBlock x:Name="txtTitle" 
-                       Text="НОВЫЙ БЮДЖЕТ" 
+            <TextBlock Text="НОВЫЙ БЮДЖЕТ" 
                        FontSize="18" 
                        FontWeight="Bold" 
-                       Margin="0,0,0,20"/>
+                       Margin="0 0 0 20"/>
 
-            <!-- КАТЕГОРИЯ -->
+            <!-- КАТЕГОРИЯ - ПУСТАЯ -->
             <TextBlock Text="Категория расходов:"/>
             <ComboBox x:Name="cmbCategory" 
-                      DisplayMemberPath="Name"/>
+                      IsEditable="True">
+                <ComboBoxItem>Продукты</ComboBoxItem>
+                <ComboBoxItem>Транспорт</ComboBoxItem>
+                <ComboBoxItem>Кафе и рестораны</ComboBoxItem>
+                <ComboBoxItem>Коммуналка</ComboBoxItem>
+                <ComboBoxItem>Одежда</ComboBoxItem>
+                <ComboBoxItem>Развлечения</ComboBoxItem>
+                <ComboBoxItem>Здоровье</ComboBoxItem>
+                <ComboBoxItem>Образование</ComboBoxItem>
+                <ComboBoxItem>Подарки</ComboBoxItem>
+                <ComboBoxItem>Другое</ComboBoxItem>
+            </ComboBox>
 
-            <!-- ЛИМИТ -->
-            <TextBlock Text="Лимит на месяц (₽):"/>
-            <TextBox x:Name="txtLimit" 
-                     Text="10000"/>
+            <!-- ЛИМИТ - ПУСТОЙ -->
+            <TextBlock Text="Лимит на месяц (₽):" Margin="0 10 0 0"/>
+            <TextBox x:Name="txtLimit"/>
 
-            <!-- МЕСЯЦ -->
-            <TextBlock Text="Месяц и год:"/>
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-
-                <ComboBox x:Name="cmbMonth" 
-                          Grid.Column="0"
-                          Margin="0,0,5,0">
-                    <ComboBoxItem Content="Январь"/>
-                    <ComboBoxItem Content="Февраль"/>
-                    <ComboBoxItem Content="Март"/>
-                    <ComboBoxItem Content="Апрель"/>
-                    <ComboBoxItem Content="Май"/>
-                    <ComboBoxItem Content="Июнь"/>
-                    <ComboBoxItem Content="Июль"/>
-                    <ComboBoxItem Content="Август"/>
-                    <ComboBoxItem Content="Сентябрь"/>
-                    <ComboBoxItem Content="Октябрь"/>
-                    <ComboBoxItem Content="Ноябрь"/>
-                    <ComboBoxItem Content="Декабрь"/>
-                </ComboBox>
-
-                <ComboBox x:Name="cmbYear" 
-                          Grid.Column="1"
-                          Margin="5,0,0,0"/>
-            </Grid>
+            <!-- МЕСЯЦ - ТЕКУЩИЙ (это ок) -->
+            <TextBlock Text="На какой месяц:" Margin="0 10 0 0"/>
+            <DatePicker x:Name="dpMonth"/>
 
             <!-- КНОПКИ -->
             <StackPanel Orientation="Horizontal" 
                         HorizontalAlignment="Right" 
-                        Margin="0,20,0,0">
-                <Button x:Name="btnCancel" 
-                        Content="Отмена" 
-                        Background="#F44336" 
+                        Margin="0 20 0 0">
+                <Button Content="Отмена" 
+                        Width="80"
+                        Background="Red"
                         Foreground="White"
+                        Margin="0 0 10 0"
                         Click="BtnCancel_Click"/>
-                <Button x:Name="btnSave" 
-                        Content="Сохранить" 
+                <Button Content="Сохранить" 
+                        Width="80"
                         Background="#4CAF50"
                         Foreground="White"
                         Click="BtnSave_Click"/>

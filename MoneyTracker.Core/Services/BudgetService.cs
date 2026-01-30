@@ -1,5 +1,4 @@
-﻿// MoneyTracker.Core/Services/BudgetService.cs
-using MoneyTracker.Core.Models;
+﻿using MoneyTracker.Core.Models;
 using MoneyTracker.Core.Patterns.Singleton;
 using System;
 using System.Collections.Generic;
@@ -14,6 +13,11 @@ namespace MoneyTracker.Core.Services
         private List<Budget> _budgets;
         private readonly string _filePath;
         private readonly AppWallet _wallet;
+
+        private List<Budget> _cachedBudgets;
+        private DateTime _budgetsCacheTime;
+        private List<BudgetTracking> _cachedBudgetTracking;
+        private DateTime _trackingCacheTime;
 
         public BudgetService()
         {
@@ -36,8 +40,7 @@ namespace MoneyTracker.Core.Services
                 else
                 {
                     _budgets = new List<Budget>();
-                    // Создаем несколько тестовых бюджетов
-                    InitializeDefaultBudgets();
+                    // Теперь НЕ создаем тестовые бюджеты!
                 }
             }
             catch
@@ -60,38 +63,20 @@ namespace MoneyTracker.Core.Services
             catch { }
         }
 
-        private void InitializeDefaultBudgets()
-        {
-            // Примеры популярных категорий с лимитами
-            var defaultBudgets = new List<Budget>
-            {
-                new Budget("Продукты", 15000),
-                new Budget("Транспорт", 5000),
-                new Budget("Кафе/рестораны", 8000),
-                new Budget("Развлечения", 5000),
-                new Budget("Одежда", 7000),
-                new Budget("Коммуналка", 10000),
-                new Budget("Здоровье", 3000),
-                new Budget("Образование", 4000),
-                new Budget("Подарки", 3000)
-            };
-
-            foreach (var budget in defaultBudgets)
-            {
-                _budgets.Add(budget);
-            }
-
-            SaveBudgets();
-        }
-
-        // Основные методы
-
+        // Основные методы (остаются без изменений)
         public List<Budget> GetAllBudgets()
         {
-            return _budgets
-                .Where(b => b.IsActive)
-                .OrderBy(b => b.Category)
-                .ToList();
+            // Кэшируем на 10 секунд
+            if (_cachedBudgets != null && (DateTime.Now - _budgetsCacheTime).TotalSeconds < 10)
+            {
+                return _cachedBudgets.Where(b => b.IsActive).OrderBy(b => b.Category).ToList();
+            }
+
+            LoadBudgets();
+            _cachedBudgets = _budgets;
+            _budgetsCacheTime = DateTime.Now;
+
+            return _budgets.Where(b => b.IsActive).OrderBy(b => b.Category).ToList();
         }
 
         public List<Budget> GetBudgetsForMonth(int year, int month)
@@ -103,13 +88,18 @@ namespace MoneyTracker.Core.Services
 
         public List<BudgetTracking> GetCurrentBudgetsWithTracking()
         {
+            // Кэшируем на 5 секунд
+            if (_cachedBudgetTracking != null && (DateTime.Now - _trackingCacheTime).TotalSeconds < 5)
+            {
+                return _cachedBudgetTracking;
+            }
+
             var now = DateTime.Now;
             var budgets = GetBudgetsForMonth(now.Year, now.Month);
             var result = new List<BudgetTracking>();
 
             foreach (var budget in budgets)
             {
-                // Считаем расходы по этой категории в текущем месяце
                 var spent = _wallet.Transactions
                     .Where(t => t.Type == MoneyTracker.Core.Enums.TransactionType.Expense &&
                                t.Category == budget.Category &&
@@ -124,15 +114,20 @@ namespace MoneyTracker.Core.Services
                 });
             }
 
-            return result
+            var sortedResult = result
                 .OrderByDescending(b => b.Spent)
                 .ThenBy(b => b.Budget.Category)
                 .ToList();
+
+            // Сохраняем в кэш
+            _cachedBudgetTracking = sortedResult;
+            _trackingCacheTime = DateTime.Now;
+
+            return sortedResult;
         }
 
         public void AddBudget(Budget budget)
         {
-            // Проверяем, нет ли уже бюджета на эту категорию в этом месяце
             var exists = _budgets.Any(b =>
                 b.Category == budget.Category &&
                 b.Year == budget.Year &&
@@ -142,6 +137,9 @@ namespace MoneyTracker.Core.Services
             {
                 _budgets.Add(budget);
                 SaveBudgets();
+                // СБРАСЫВАЕМ КЭШ
+                _cachedBudgets = null;
+                _cachedBudgetTracking = null;
             }
         }
 
@@ -156,6 +154,9 @@ namespace MoneyTracker.Core.Services
                 existing.Month = budget.Month;
                 existing.IsActive = budget.IsActive;
                 SaveBudgets();
+                // СБРАСЫВАЕМ КЭШ
+                _cachedBudgets = null;
+                _cachedBudgetTracking = null;
             }
         }
 
@@ -163,14 +164,15 @@ namespace MoneyTracker.Core.Services
         {
             _budgets.RemoveAll(b => b.Id == id);
             SaveBudgets();
+            // СБРАСЫВАЕМ КЭШ
+            _cachedBudgets = null;
+            _cachedBudgetTracking = null;
         }
 
-        public Budget? GetBudget(Guid id)
+        public Budget GetBudget(Guid id)
         {
             return _budgets.FirstOrDefault(b => b.Id == id);
         }
-
-        // Утилиты
 
         public decimal GetTotalMonthlyLimit()
         {
@@ -193,26 +195,6 @@ namespace MoneyTracker.Core.Services
         public decimal GetTotalRemaining()
         {
             return GetTotalMonthlyLimit() - GetTotalSpentThisMonth();
-        }
-
-        public List<string> GetCategoriesWithoutBudget(int year, int month)
-        {
-            var budgetCategories = _budgets
-                .Where(b => b.Year == year && b.Month == month)
-                .Select(b => b.Category)
-                .Distinct()
-                .ToList();
-
-            var allCategories = _wallet.Transactions
-                .Where(t => t.Type == MoneyTracker.Core.Enums.TransactionType.Expense)
-                .Select(t => t.Category)
-                .Distinct()
-                .ToList();
-
-            return allCategories
-                .Where(c => !budgetCategories.Contains(c))
-                .OrderBy(c => c)
-                .ToList();
         }
     }
 }

@@ -1,0 +1,113 @@
+﻿<Window x:Class="MoneyTracker.App.Views.NotificationsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="🔔 Уведомления" 
+        Height="500" 
+        Width="450"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- ШАПКА -->
+        <Border Grid.Row="0" Background="#FF9800" Padding="20">
+            <StackPanel>
+                <TextBlock Text="🔔 УВЕДОМЛЕНИЯ" 
+                           FontSize="20" 
+                           FontWeight="Bold" 
+                           Foreground="White"/>
+                <TextBlock x:Name="txtNotificationCount" 
+                           Text="0 новых уведомлений" 
+                           FontSize="14" 
+                           Foreground="#FFF3E0"/>
+            </StackPanel>
+        </Border>
+
+        <!-- СПИСОК УВЕДОМЛЕНИЙ -->
+        <ListView x:Name="lstNotifications" 
+                  Grid.Row="1" 
+                  Margin="10"
+                  ScrollViewer.VerticalScrollBarVisibility="Auto">
+                  PreviewMouseRightButtonUp="ListViewItem_MouseRightButtonUp">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Border Background="White" 
+                            Margin="0,5" 
+                            Padding="15" 
+                            CornerRadius="8"
+                            BorderBrush="#E0E0E0" 
+                            BorderThickness="1">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- ИКОНКА -->
+                            <TextBlock Grid.Column="0" 
+                                       Text="{Binding Icon}" 
+                                       FontSize="24"
+                                       Margin="0,0,15,0"
+                                       VerticalAlignment="Center"/>
+
+                            <!-- ТЕКСТ -->
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="{Binding Title}" 
+                                           FontWeight="Bold" 
+                                           FontSize="14"/>
+                                <TextBlock Text="{Binding Message}" 
+                                           Foreground="#666" 
+                                           Margin="0,5,0,0"
+                                           TextWrapping="Wrap"/>
+                                <TextBlock Text="{Binding CreatedAt, StringFormat='{}{0:HH:mm}'}" 
+                                           Foreground="#999" 
+                                           FontSize="11"
+                                           Margin="0,5,0,0"/>
+                            </StackPanel>
+
+                            <!-- КНОПКА ЗАКРЫТЬ -->
+                            <Button Grid.Column="2" 
+                                    Content="✕" 
+                                    Width="24" 
+                                    Height="24"
+                                    FontSize="12"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    Foreground="#999"
+                                    Cursor="Hand"
+                                    Tag="{Binding Id}"
+                                    Click="BtnCloseNotification_Click"
+                                    ToolTip="Убрать уведомление"/>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <!-- КНОПКИ -->
+        <Border Grid.Row="2" 
+                Background="#F5F5F5" 
+                Padding="15">
+            <StackPanel Orientation="Horizontal" 
+                        HorizontalAlignment="Center">
+                <Button x:Name="btnMarkAllRead"
+                        Content="✅ Прочитать все" 
+                        Padding="15,8"
+                        Background="#4CAF50"
+                        Foreground="White"
+                        Click="BtnMarkAllRead_Click"/>
+
+                <Button Content="✕ Закрыть" 
+                        Padding="15,8"
+                        Margin="10,0,0,0"
+                        Click="BtnClose_Click"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

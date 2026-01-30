@@ -1,118 +1,32 @@
-﻿// MoneyTracker.App/Views/AddEditBudgetWindow.xaml.cs
-using MoneyTracker.Core.Models;
-using MoneyTracker.Core.Patterns.Singleton;
+﻿using MoneyTracker.Core.Models;
 using MoneyTracker.Core.Services;
 using System;
 using System.Globalization;
-using System.Linq;
 using System.Windows;
 
 namespace MoneyTracker.App.Views
 {
     public partial class AddEditBudgetWindow : Window
     {
-        private readonly BudgetService _budgetService;
-        public Budget? Budget { get; private set; }
+        public Budget Budget { get; private set; }
 
         public AddEditBudgetWindow()
         {
             InitializeComponent();
-            _budgetService = new BudgetService();
-            InitializeControls();
+            dpMonth.SelectedDate = DateTime.Now;
+            // Всё остальное ПУСТОЕ!
         }
 
-        // Конструктор для редактирования
+        // Для редактирования
         public AddEditBudgetWindow(Budget existingBudget) : this()
         {
+            Title = "Редактировать бюджет";
             Budget = existingBudget;
-            txtTitle.Text = "РЕДАКТИРОВАТЬ БЮДЖЕТ";
-            LoadExistingBudget();
-        }
 
-        private void InitializeControls()
-        {
-            // Заполняем года (текущий и следующий)
-            var currentYear = DateTime.Now.Year;
-            for (int i = 0; i < 2; i++)
-            {
-                cmbYear.Items.Add(currentYear + i);
-            }
-            cmbYear.SelectedIndex = 0;
-
-            // Месяц - текущий
-            cmbMonth.SelectedIndex = DateTime.Now.Month - 1;
-
-            // Категории расходов
-            LoadCategories();
-        }
-
-        private void LoadExistingBudget()
-        {
-            if (Budget == null) return;
-
-            txtLimit.Text = Budget.MonthlyLimit.ToString();
-            cmbMonth.SelectedIndex = Budget.Month - 1;
-            cmbYear.SelectedItem = Budget.Year;
-
-            // Выбираем категорию
-            foreach (var item in cmbCategory.Items)
-            {
-                if (item is string category && category == Budget.Category)
-                {
-                    cmbCategory.SelectedItem = item;
-                    break;
-                }
-            }
-        }
-
-        private void LoadCategories()
-        {
-            try
-            {
-                cmbCategory.Items.Clear();
-
-                // Получаем все уникальные категории расходов из транзакций
-                var wallet = AppWallet.Instance; // Получаем через Singleton
-                var categories = wallet.Transactions
-                    .Where(t => t.Type == MoneyTracker.Core.Enums.TransactionType.Expense)
-                    .Select(t => t.Category)
-                    .Distinct()
-                    .OrderBy(c => c)
-                    .ToList();
-
-                // Добавляем популярные категории, если их еще нет
-                var popularCategories = new[]
-                {
-                    "Продукты",
-                    "Транспорт",
-                    "Кафе/рестораны",
-                    "Коммуналка",
-                    "Одежда",
-                    "Развлечения",
-                    "Здоровье",
-                    "Образование",
-                    "Подарки",
-                    "Другое"
-                };
-
-                foreach (var category in popularCategories)
-                {
-                    if (!categories.Contains(category))
-                        categories.Add(category);
-                }
-
-                foreach (var category in categories.OrderBy(c => c))
-                {
-                    cmbCategory.Items.Add(category);
-                }
-
-                if (cmbCategory.Items.Count > 0)
-                    cmbCategory.SelectedIndex = 0;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка загрузки категорий: {ex.Message}", "Ошибка");
-            }
+            // Заполняем существующими данными
+            txtLimit.Text = existingBudget.MonthlyLimit.ToString();
+            dpMonth.SelectedDate = new DateTime(existingBudget.Year, existingBudget.Month, 1);
+            cmbCategory.Text = existingBudget.Category;
         }
 
         private void BtnSave_Click(object sender, RoutedEventArgs e)
@@ -120,43 +34,54 @@ namespace MoneyTracker.App.Views
             try
             {
                 // Проверка категории
-                if (cmbCategory.SelectedItem == null)
+                string category = cmbCategory.Text?.Trim();
+                if (string.IsNullOrEmpty(category))
                 {
-                    MessageBox.Show("Выберите категорию", "Ошибка");
+                    MessageBox.Show("Введите категорию расходов", "Ошибка");
+                    cmbCategory.Focus();
                     return;
                 }
 
                 // Проверка лимита
-                if (!decimal.TryParse(txtLimit.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out decimal limit) || limit <= 0)
+                if (string.IsNullOrEmpty(txtLimit.Text))
                 {
-                    MessageBox.Show("Введите корректный лимит (положительное число)", "Ошибка");
+                    MessageBox.Show("Введите лимит", "Ошибка");
+                    txtLimit.Focus();
                     return;
                 }
 
-                // Получаем месяц и год
-                var month = cmbMonth.SelectedIndex + 1;
-                if (cmbYear.SelectedItem is not int year)
+                if (!decimal.TryParse(txtLimit.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out decimal limit) || limit <= 0)
                 {
-                    year = DateTime.Now.Year;
+                    MessageBox.Show("Лимит должен быть положительным числом", "Ошибка");
+                    txtLimit.SelectAll();
+                    txtLimit.Focus();
+                    return;
                 }
 
-                var category = cmbCategory.SelectedItem.ToString() ?? "Другое";
+                // Проверка даты
+                if (dpMonth.SelectedDate == null)
+                {
+                    MessageBox.Show("Выберите месяц", "Ошибка");
+                    return;
+                }
 
-                // Создаем или обновляем бюджет
+                var date = dpMonth.SelectedDate.Value;
+
+                // Создаём или обновляем бюджет
                 if (Budget == null)
                 {
                     Budget = new Budget(category, limit)
                     {
-                        Year = year,
-                        Month = month
+                        Year = date.Year,
+                        Month = date.Month
                     };
                 }
                 else
                 {
                     Budget.Category = category;
                     Budget.MonthlyLimit = limit;
-                    Budget.Year = year;
-                    Budget.Month = month;
+                    Budget.Year = date.Year;
+                    Budget.Month = date.Month;
                 }
 
                 DialogResult = true;
