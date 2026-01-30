@@ -4,8 +4,10 @@ using System;
 
 namespace MoneyTracker.Core.Patterns.Factories
 {
+    // конкретная фабрика для создания расходов
     public class ExpenseFactory : TransactionFactory
     {
+        // создание транзакции расхода
         public override Transaction CreateTransaction(
             decimal amount,
             string category,
@@ -19,23 +21,24 @@ namespace MoneyTracker.Core.Patterns.Factories
                 Type = TransactionType.Expense,
                 Amount = amount,
                 Category = category ?? "Расход",
-                Description = string.IsNullOrEmpty(description)
-                    ? $"Расход: {category}"
-                    : description,
+                Description = description, // ← ПРОСТО description
                 Date = DateTime.Now
             };
         }
 
-        // Добавьте эти методы:
+        // расход
         public override TransactionType GetTransactionType()
             => TransactionType.Expense;
 
+        // отображаемое имя
         public override string GetDisplayName()
             => "Расход";
 
+        // красный цвет для расходов
         public override string GetColor()
-            => "#F44336"; // Красный
+            => "#F44336";
 
+        // иконка 
         public override string GetIcon()
             => "💸";
     }

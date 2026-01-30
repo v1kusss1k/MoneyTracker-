@@ -9,15 +9,7 @@ namespace MoneyTracker.App.Views
             InitializeComponent();
         }
 
-        private void BtnSave_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show("Настройки сохранены", "Успех");
-            Close();
-        }
-
-        private void BtnCancel_Click(object sender, RoutedEventArgs e)
-        {
-            Close();
-        }
+        private void BtnSave_Click(object sender, RoutedEventArgs e) { }
+        private void BtnCancel_Click(object sender, RoutedEventArgs e) { }
     }
 }

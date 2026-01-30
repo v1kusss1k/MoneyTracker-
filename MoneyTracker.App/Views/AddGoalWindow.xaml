@@ -55,7 +55,7 @@
             <!-- ЦЕЛЕВАЯ СУММА -->
             <TextBlock Text="Целевая сумма (₽):"/>
             <TextBox x:Name="txtTargetAmount" 
-                     Text="10000"/>
+                     Text="0"/>
 
             <!-- ДАТА ДОСТИЖЕНИЯ -->
             <TextBlock Text="Дата достижения:"/>
@@ -70,12 +70,12 @@
                         Content="Отмена" 
                         Background="#F44336" 
                         Foreground="White"
-                        Click="BtnCancel_Click"/>
+                        Click="BtnCancel_Click" Width="91"/>
                 <Button x:Name="btnSave" 
                         Content="Сохранить" 
                         Background="#4CAF50"
                         Foreground="White"
-                        Click="BtnSave_Click"/>
+                        Click="BtnSave_Click" Width="91"/>
             </StackPanel>
         </StackPanel>
     </Grid>

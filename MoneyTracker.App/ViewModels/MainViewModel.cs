@@ -9,61 +9,65 @@ using System.Windows.Input;
 
 namespace MoneyTracker.App.ViewModels
 {
+    // основная viewmodel приложения, связывает модель с представлением 
     public class MainViewModel : ViewModelBase
     {
-        private readonly AppWallet _wallet;
+        private readonly AppWallet _wallet;                // singleton экземпляр
         private decimal _balance;
         private decimal _totalIncome;
         private decimal _totalExpense;
         private int _transactionCount;
 
+        // текущий баланс
         public decimal Balance
         {
             get => _balance;
             set => SetField(ref _balance, value);
         }
 
+        // общий доход
         public decimal TotalIncome
         {
             get => _totalIncome;
             set => SetField(ref _totalIncome, value);
         }
 
+        // общий расход
         public decimal TotalExpense
         {
             get => _totalExpense;
             set => SetField(ref _totalExpense, value);
         }
 
+        // количество транзакций
         public int TransactionCount
         {
             get => _transactionCount;
             set => SetField(ref _transactionCount, value);
         }
 
+        // коллекция транзакций для отображения
         public ObservableCollection<TransactionViewModel> Transactions { get; }
 
-        // Команды
+        // команды для кнопок
         public ICommand AddIncomeCommand { get; }
         public ICommand AddExpenseCommand { get; }
         public ICommand OpenGoalsCommand { get; }
-        public ICommand RefreshCommand { get; }
 
         public MainViewModel()
         {
-            _wallet = AppWallet.Instance;
+            _wallet = AppWallet.Instance;                                            // получаем singleton
             Transactions = new ObservableCollection<TransactionViewModel>();
 
-            // Инициализация команд
+            // инициализация команд
             AddIncomeCommand = new RelayCommand(AddIncome);
             AddExpenseCommand = new RelayCommand(AddExpense);
             OpenGoalsCommand = new RelayCommand(OpenGoals);
-            RefreshCommand = new RelayCommand(Refresh);
-
             LoadData();
         }
 
-        public void LoadData() 
+        // загрузка данных из кошелька
+        public void LoadData()
         {
             Transactions.Clear();
 
@@ -78,31 +82,28 @@ namespace MoneyTracker.App.ViewModels
             TransactionCount = _wallet.Transactions.Count;
         }
 
+        // добавление дохода через фабрику
         private void AddIncome(object? parameter)
         {
-            var factory = new IncomeFactory();
-            var transaction = factory.CreateTransaction(1000, "Доход", "Тестовый доход");
+            var factory = new IncomeFactory(); // создаем фабрику доходов
+            var transaction = factory.CreateTransaction(1000, "Доход", "тестовый доход");
             _wallet.AddTransaction(transaction);
             LoadData();
         }
 
+        // добавление расхода через фабрику
         private void AddExpense(object? parameter)
         {
-            var factory = new ExpenseFactory();
-            var transaction = factory.CreateTransaction(500, "Расход", "Тестовый расход");
+            var factory = new ExpenseFactory(); // создаем фабрику расходов
+            var transaction = factory.CreateTransaction(500, "Расход", "тестовый расход");
             _wallet.AddTransaction(transaction);
             LoadData();
         }
 
+        // открытие окна целей
         private void OpenGoals(object? parameter)
         {
-            System.Windows.MessageBox.Show("Цели - в разработке", "Информация");
-        }
-
-        private void Refresh(object? parameter)
-        {
-            LoadData();
-            System.Windows.MessageBox.Show("Данные обновлены", "Обновление");
+            System.Windows.MessageBox.Show(" ");
         }
     }
 }

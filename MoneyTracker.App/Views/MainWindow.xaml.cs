@@ -1,7 +1,9 @@
 ﻿using MoneyTracker.App.ViewModels;
 using MoneyTracker.Core.Patterns.Singleton;
 using System;
+using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace MoneyTracker.App.Views
 {
@@ -16,14 +18,60 @@ namespace MoneyTracker.App.Views
             // Обработчики
             btnAddIncome.Click += btnAddIncome_Click;
             btnAddExpense.Click += btnAddExpense_Click;
-            btnGoals.Click += (s, e) => new GoalsWindow().ShowDialog();
-            btnRefresh.Click += (s, e) => UpdateDisplay();
+            btnGoals.Click += btnGoals_Click;
             btnClearAll.Click += btnClearAll_Click;
-            btnReports.Click += (s, e) => new ReportsWindow().ShowDialog();
-            btnSettings.Click += (s, e) => new SettingsWindow().ShowDialog();
+            btnReports.Click += btnReports_Click;
+            btnSettings.Click += btnSettings_Click;
+            btnBudgets.Click += btnBudgets_Click;
 
             _wallet = AppWallet.Instance;
             UpdateDisplay();
+        }
+
+        // Обработчик кнопки "Цели"
+        private void btnGoals_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var goalsWindow = new GoalsWindow();
+                goalsWindow.Owner = this;
+                goalsWindow.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка открытия целей: {ex.Message}",
+                              "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void btnReports_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var reportsWindow = new ReportsWindow();
+                reportsWindow.Owner = this;
+                reportsWindow.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка открытия отчетов: {ex.Message}",
+                              "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void btnSettings_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var settingsWindow = new SettingsWindow();
+                settingsWindow.Owner = this;
+                settingsWindow.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка открытия настроек: {ex.Message}",
+                              "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void UpdateDisplay()
@@ -51,6 +99,7 @@ namespace MoneyTracker.App.Views
                 txtStatus.Text = $"Ошибка: {ex.Message}";
                 MessageBox.Show($"Ошибка обновления: {ex.Message}", "Ошибка");
             }
+            txtStatus.Text = $"Баланс: {_wallet.Balance:N0}₽ | Операций: {_wallet.Transactions.Count} | ✓ Автосохранение";
         }
 
         private void btnAddIncome_Click(object sender, RoutedEventArgs e)
@@ -78,9 +127,133 @@ namespace MoneyTracker.App.Views
             if (result == MessageBoxResult.Yes)
             {
                 _wallet.Transactions.Clear();
-                _wallet.Clear(); // Убедитесь, что этот метод есть в AppWallet
+                _wallet.Clear();
                 UpdateDisplay();
                 txtStatus.Text = "Все операции удалены";
+            }
+        }
+
+        // НОВЫЕ МЕТОДЫ ДЛЯ УДАЛЕНИЯ ОТДЕЛЬНЫХ ТРАНЗАКЦИЙ
+
+        // Обработчик для кнопки удаления в строке
+        private void BtnDeleteTransaction_Click(object sender, RoutedEventArgs e)
+        {
+            DeleteSelectedTransaction(sender);
+        }
+
+        // Обработчик для контекстного меню
+        private void MenuItemDelete_Click(object sender, RoutedEventArgs e)
+        {
+            DeleteSelectedTransaction(null);
+        }
+
+        // Общий метод удаления
+        private void DeleteSelectedTransaction(object buttonOrMenuItem)
+        {
+            try
+            {
+                Guid transactionId = Guid.Empty;
+
+                // Если нажали кнопку в строке
+                if (buttonOrMenuItem is Button button && button.Tag is Guid buttonTag)
+                {
+                    transactionId = buttonTag;
+                }
+                // Если выбрали из контекстного меню
+                else if (lstTransactions.SelectedItem is TransactionViewModel selected)
+                {
+                    transactionId = selected.Id;
+                }
+                else
+                {
+                    MessageBox.Show("Выберите транзакцию для удаления",
+                                  "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
+                    return;
+                }
+
+                // Находим транзакцию
+                var transaction = _wallet.Transactions.FirstOrDefault(t => t.Id == transactionId);
+                if (transaction == null) return;
+
+                var transactionType = transaction.Type == MoneyTracker.Core.Enums.TransactionType.Income ? "доход" : "расход";
+                var amount = transaction.Amount;
+                var category = transaction.Category;
+                var description = transaction.Description;
+
+                var result = MessageBox.Show(
+                    $"Удалить {transactionType}?\n\n" +
+                    $"💰 Сумма: {amount:N0}₽\n" +
+                    $"📁 Категория: {category}\n" +
+                    $"📝 Описание: {(string.IsNullOrEmpty(description) ? "(нет)" : description)}",
+                    "Подтверждение удаления",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    var success = _wallet.RemoveTransaction(transactionId);
+                    if (success)
+                    {
+                        UpdateDisplay();
+                        txtStatus.Text = $"Транзакция удалена. Баланс: {_wallet.Balance:N0}₽";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка удаления: {ex.Message}", "Ошибка",
+                               MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        // Копирование суммы
+        private void MenuItemCopyAmount_Click(object sender, RoutedEventArgs e)
+        {
+            if (lstTransactions.SelectedItem is TransactionViewModel selected)
+            {
+                System.Windows.Clipboard.SetText(selected.Amount.ToString());
+                txtStatus.Text = "Сумма скопирована в буфер";
+            }
+        }
+
+        // Копирование описания
+        private void MenuItemCopyDescription_Click(object sender, RoutedEventArgs e)
+        {
+            if (lstTransactions.SelectedItem is TransactionViewModel selected)
+            {
+                System.Windows.Clipboard.SetText(selected.Description);
+                txtStatus.Text = "Описание скопировано в буфер";
+            }
+        }
+
+        // Просмотр деталей
+        private void MenuItemDetails_Click(object sender, RoutedEventArgs e)
+        {
+            if (lstTransactions.SelectedItem is TransactionViewModel selected)
+            {
+                MessageBox.Show(
+                    $"📋 Детали транзакции:\n\n" +
+                    $"📅 Дата: {selected.DateFormatted}\n" +
+                    $"📁 Тип: {selected.TypeDisplay}\n" +
+                    $"🏷️ Категория: {selected.Category}\n" +
+                    $"💰 Сумма: {selected.AmountFormatted}\n" +
+                    $"📝 Описание: {selected.Description}",
+                    "Детали транзакции",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+            }
+        }
+        private void btnBudgets_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var budgetWindow = new BudgetWindow();
+                budgetWindow.Owner = this;
+                budgetWindow.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка открытия бюджетов: {ex.Message}", "Ошибка");
             }
         }
     }

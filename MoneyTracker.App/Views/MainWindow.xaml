@@ -6,9 +6,6 @@
         Width="1000"
         WindowStartupLocation="CenterScreen">
 
-    <Window.Resources>
-    </Window.Resources>
-
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -110,6 +107,13 @@
                             Foreground="White"
                             Height="35"/>
 
+                    <Button x:Name="btnBudgets" 
+                            Content="💰 Бюджеты" 
+                            Background="#2196F3"
+                            Foreground="White"
+                            Height="35"
+                            Margin="0 5 0 0"
+                            Click="btnBudgets_Click"/>
                     <Button x:Name="btnReports" 
                             Content="📊 Отчёты" 
                             Background="#9C27B0"
@@ -150,12 +154,6 @@
                                 <TextBlock Text="📋 ПОСЛЕДНИЕ ОПЕРАЦИИ" 
                                            FontSize="16" 
                                            FontWeight="Bold"/>
-                                <Button x:Name="btnRefresh" 
-                                        Content="🔄 Обновить" 
-                                        Background="Transparent" 
-                                        Foreground="#2196F3"
-                                        BorderThickness="0"
-                                        Margin="20 0 0 0"/>
                             </StackPanel>
 
                             <!-- КНОПКА ОЧИСТИТЬ ВСЕ - СПРАВА -->
@@ -169,10 +167,23 @@
                         </Grid>
                     </Border>
 
-                    <!-- СПИСОК ТРАНЗАКЦИЙ -->
+                    <!-- СПИСОК ТРАНЗАКЦИЙ (ОБНОВЛЕННЫЙ) -->
                     <ListView x:Name="lstTransactions" 
                               Grid.Row="1"
                               BorderThickness="0">
+
+                        <!-- КОНТЕКСТНОЕ МЕНЮ (правый клик) -->
+                        <ListView.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="🗑️ Удалить" Click="MenuItemDelete_Click"/>
+                                <Separator/>
+                                <MenuItem Header="📋 Копировать сумму" Click="MenuItemCopyAmount_Click"/>
+                                <MenuItem Header="📋 Копировать описание" Click="MenuItemCopyDescription_Click"/>
+                                <Separator/>
+                                <MenuItem Header="📊 Детали" Click="MenuItemDetails_Click"/>
+                            </ContextMenu>
+                        </ListView.ContextMenu>
+
                         <ListView.View>
                             <GridView>
                                 <!-- ДАТА -->
@@ -185,12 +196,12 @@
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
 
-                                <!-- ТИП (НА РУССКОМ) -->
+                                <!-- ТИП -->
                                 <GridViewColumn Header="Тип" Width="80">
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding TypeDisplay}" 
-                       FontWeight="Bold">
+                                                       FontWeight="Bold">
                                                 <TextBlock.Style>
                                                     <Style TargetType="TextBlock">
                                                         <Style.Triggers>
@@ -247,6 +258,26 @@
                                                     </Style>
                                                 </TextBlock.Style>
                                             </TextBlock>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+
+                                <!-- КНОПКА УДАЛЕНИЯ (компактная) -->
+                                <GridViewColumn Header="" Width="40">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button ToolTip="Удалить транзакцию"
+                                                    Content="🗑️"
+                                                    FontSize="12"
+                                                    Width="30"
+                                                    Height="30"
+                                                    Padding="0"
+                                                    Background="Transparent"
+                                                    BorderThickness="0"
+                                                    Foreground="#F44336"
+                                                    Cursor="Hand"
+                                                    Click="BtnDeleteTransaction_Click"
+                                                    Tag="{Binding Id}"/>
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>

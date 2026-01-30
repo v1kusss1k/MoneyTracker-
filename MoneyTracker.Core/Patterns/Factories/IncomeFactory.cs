@@ -4,8 +4,11 @@ using System;
 
 namespace MoneyTracker.Core.Patterns.Factories
 {
+    // конкретная фабрика для создания доходов, реализация абстрактной фабрики
     public class IncomeFactory : TransactionFactory
     {
+        // создание транзакции дохода
+        // IncomeFactory.cs
         public override Transaction CreateTransaction(
             decimal amount,
             string category,
@@ -19,23 +22,24 @@ namespace MoneyTracker.Core.Patterns.Factories
                 Type = TransactionType.Income,
                 Amount = amount,
                 Category = category ?? "Доход",
-                Description = string.IsNullOrEmpty(description)
-                    ? $"Доход: {category}"
-                    : description,
+                Description = description, // ← ПРОСТО description, без автоматического текста
                 Date = DateTime.Now
             };
         }
 
-        // Добавьте эти методы:
+        // тип - доход
         public override TransactionType GetTransactionType()
             => TransactionType.Income;
 
+        // отображаемое имя
         public override string GetDisplayName()
             => "Доход";
 
+        // зеленый цвет для доходов
         public override string GetColor()
-            => "#4CAF50"; // Зелёный
+            => "#4CAF50";
 
+        // иконка 
         public override string GetIcon()
             => "💰";
     }

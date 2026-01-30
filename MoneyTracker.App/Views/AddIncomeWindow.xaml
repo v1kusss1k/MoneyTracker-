@@ -18,13 +18,13 @@
 
             <TextBlock Text="Категория дохода:" Margin="0 10 0 0"/>
             <ComboBox x:Name="cmbCategory" SelectedIndex="0">
-                <ComboBoxItem Content="💼 Зарплата"/>
-                <ComboBoxItem Content="👨‍💻 Фриланс"/>
-                <ComboBoxItem Content="📈 Инвестиции"/>
-                <ComboBoxItem Content="🎁 Подарок"/>
-                <ComboBoxItem Content="🏆 Премия"/>
-                <ComboBoxItem Content="🏠 Аренда"/>
-                <ComboBoxItem Content="💰 Возврат долга"/>
+                <ComboBoxItem Content="Зарплата"/>
+                <ComboBoxItem Content="Фриланс"/>
+                <ComboBoxItem Content="Инвестиции"/>
+                <ComboBoxItem Content="Подарок"/>
+                <ComboBoxItem Content="Премия"/>
+                <ComboBoxItem Content="Аренда"/>
+                <ComboBoxItem Content="Возврат долга"/>
             </ComboBox>
 
             <TextBlock Text="Описание (необязательно):" Margin="0 10 0 0"/>

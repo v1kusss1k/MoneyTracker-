@@ -1,4 +1,5 @@
-﻿using System;
+﻿// MoneyTracker.Core/Models/Goal.cs
+using System;
 
 namespace MoneyTracker.Core.Models
 {
@@ -12,14 +13,23 @@ namespace MoneyTracker.Core.Models
         public DateTime TargetDate { get; set; }
         public DateTime CreatedDate { get; set; }
         public bool IsCompleted { get; set; }
+        public string Icon { get; set; }
+        public string Color { get; set; }
+        public bool IsArchived { get; set; }
+        public bool WasNotified { get; set; }
 
         public Goal()
         {
             Id = Guid.NewGuid();
             CreatedDate = DateTime.Now;
-            TargetDate = DateTime.Now.AddMonths(6);
-            Name = string.Empty;
-            Description = string.Empty;
+            TargetDate = DateTime.Now.AddMonths(3);
+            Name = "Новая цель";
+            Description = "";
+            Icon = "🎯";
+            Color = "#FF9800";
+            IsArchived = false;
+            CurrentAmount = 0;
+            WasNotified = false;
         }
 
         public Goal(string name, string description, decimal targetAmount) : this()
@@ -29,7 +39,6 @@ namespace MoneyTracker.Core.Models
             TargetAmount = targetAmount;
         }
 
-        // Добавьте эти свойства:
         public decimal ProgressPercentage
         {
             get
@@ -41,16 +50,32 @@ namespace MoneyTracker.Core.Models
 
         public decimal RemainingAmount => TargetAmount - CurrentAmount;
 
-        public string ProgressText => $"{ProgressPercentage:F1}% ({CurrentAmount:N0}₽ из {TargetAmount:N0}₽)";
+        public string ProgressText => $"{CurrentAmount:N0}₽ / {TargetAmount:N0}₽";
 
-        // Добавьте этот метод:
+        public int DaysRemaining => Math.Max(0, (TargetDate - DateTime.Now).Days);
+
+        public string Status
+        {
+            get
+            {
+                if (IsCompleted) return "✅ Завершена";
+                if (CurrentAmount == 0) return "🆕 Новая";
+                return "⏳ В процессе";
+            }
+        }
+
         public void AddAmount(decimal amount)
         {
+            if (amount <= 0) return;
+
+            // УПРОЩАЕМ: убираем wasCompletedBefore
             CurrentAmount += amount;
             if (CurrentAmount >= TargetAmount)
             {
                 CurrentAmount = TargetAmount;
                 IsCompleted = true;
+                // При достижении цели сбрасываем флаг уведомления
+                WasNotified = false;
             }
         }
     }

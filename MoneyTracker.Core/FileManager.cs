@@ -6,20 +6,25 @@ using System.Text.Json;
 
 namespace MoneyTracker.Core
 {
+    // менеджер для работы с файлами использует json для сериализации
     public static class FileManager
     {
+        // путь к папке с данными в appdata
         private static readonly string DataFolder = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
             "MoneyTracker");
 
+        // путь к файлу транзакций
         private static readonly string TransactionsFile = Path.Combine(DataFolder, "transactions.json");
 
+        // статический конструктор создает папку при первом обращении
         static FileManager()
         {
             if (!Directory.Exists(DataFolder))
                 Directory.CreateDirectory(DataFolder);
         }
 
+        // загрузка транзакций из файла
         public static List<Transaction> LoadTransactions()
         {
             try
@@ -36,6 +41,7 @@ namespace MoneyTracker.Core
             }
         }
 
+        // сохранение транзакций в файл
         public static void SaveTransactions(List<Transaction> transactions)
         {
             try

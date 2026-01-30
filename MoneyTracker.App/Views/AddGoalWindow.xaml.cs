@@ -1,4 +1,4 @@
-﻿#nullable disable
+﻿// MoneyTracker.App/Views/AddGoalWindow.xaml.cs
 using MoneyTracker.Core.Models;
 using System;
 using System.Globalization;
@@ -8,11 +8,12 @@ namespace MoneyTracker.App.Views
 {
     public partial class AddGoalWindow : Window
     {
-        public Goal? Goal { get; private set; }
+        public Goal Goal { get; private set; }
 
         public AddGoalWindow()
         {
             InitializeComponent();
+            Goal = new Goal();
             dpTargetDate.SelectedDate = DateTime.Now.AddMonths(1);
         }
 
@@ -55,21 +56,10 @@ namespace MoneyTracker.App.Views
                     return;
                 }
 
-                // Создаём или обновляем цель
-                if (Goal == null)
-                {
-                    Goal = new Goal(
-                        txtName.Text.Trim(),
-                        txtDescription.Text.Trim(),
-                        targetAmount);
-                }
-                else
-                {
-                    Goal.Name = txtName.Text.Trim();
-                    Goal.Description = txtDescription.Text.Trim();
-                    Goal.TargetAmount = targetAmount;
-                }
-
+                // Обновляем цель
+                Goal.Name = txtName.Text.Trim();
+                Goal.Description = txtDescription.Text.Trim();
+                Goal.TargetAmount = targetAmount;
                 Goal.TargetDate = dpTargetDate.SelectedDate.Value;
 
                 DialogResult = true;

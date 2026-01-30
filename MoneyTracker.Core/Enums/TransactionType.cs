@@ -1,8 +1,9 @@
 ﻿namespace MoneyTracker.Core.Enums
 {
+    // перечисление типов транзакций
     public enum TransactionType
     {
-        Income,
-        Expense
+        Income,   // доход
+        Expense   // расход
     }
 }

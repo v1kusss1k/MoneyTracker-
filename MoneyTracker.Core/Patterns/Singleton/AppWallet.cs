@@ -6,6 +6,7 @@ using System.Linq;
 
 namespace MoneyTracker.Core.Patterns.Singleton
 {
+    // один экземпляр кошелька на всё приложение, гарантирует единую точку доступа к данным о финансах
     public sealed class AppWallet
     {
         private static AppWallet _instance;
@@ -13,13 +14,13 @@ namespace MoneyTracker.Core.Patterns.Singleton
 
         public decimal Balance { get; private set; }
         public List<Transaction> Transactions { get; private set; }
-
         private AppWallet()
         {
             Transactions = FileManager.LoadTransactions();
             CalculateBalance();
         }
 
+        // свойство для доступа к единственному экземпляру
         public static AppWallet Instance
         {
             get
@@ -28,14 +29,14 @@ namespace MoneyTracker.Core.Patterns.Singleton
                 {
                     if (_instance == null)
                     {
-                        _instance = new AppWallet();
+                        _instance = new AppWallet();                             //создается единственный экземпляр
                     }
                     return _instance;
                 }
             }
         }
 
-        public void AddTransaction(Transaction transaction)
+        public void AddTransaction(Transaction transaction)       // добавление новой транзакции
         {
             Transactions.Add(transaction);
 
@@ -44,10 +45,26 @@ namespace MoneyTracker.Core.Patterns.Singleton
             else
                 Balance -= transaction.Amount;
 
-            FileManager.SaveTransactions(Transactions); // Сохраняем в файл
+            FileManager.SaveTransactions(Transactions);           // автосохранение
         }
 
-        private void CalculateBalance()
+        public bool RemoveTransaction(Guid transactionId)
+        {
+            var transaction = Transactions.FirstOrDefault(t => t.Id == transactionId);
+            if (transaction == null)
+                return false;
+
+            // Пересчитываем баланс
+            if (transaction.Type == TransactionType.Income)
+                Balance -= transaction.Amount;
+            else
+                Balance += transaction.Amount;
+
+            Transactions.Remove(transaction);
+            FileManager.SaveTransactions(Transactions);
+            return true;
+        }
+        private void CalculateBalance()                          // пересчет баланса
         {
             Balance = 0;
             foreach (var transaction in Transactions)
@@ -66,29 +83,23 @@ namespace MoneyTracker.Core.Patterns.Singleton
                 .ToList();
         }
 
-        public decimal GetTotalIncome()
+        public decimal GetTotalIncome()                                 // общий доход
         {
             return Transactions
                 .Where(t => t.Type == TransactionType.Income)
                 .Sum(t => t.Amount);
         }
 
-        public decimal GetTotalExpense()
+        public decimal GetTotalExpense()                               // общий расход
         {
             return Transactions
                 .Where(t => t.Type == TransactionType.Expense)
                 .Sum(t => t.Amount);
         }
-        public void Clear()
+        public void Clear()                                           // очистка всех данных
         {
             Transactions.Clear();
             Balance = 0;
-        }
-        public void Reset()
-        {
-            Transactions.Clear();
-            Balance = 0; // Можно внутри класса
-            FileManager.SaveTransactions(Transactions); // Если есть
         }
     }
 }
